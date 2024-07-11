@@ -1,4 +1,4 @@
-import { combineFrameworkPokemonArrays } from '../helper/combineFrameworkPokemonArrays';
+import { combineFrameworkPokemonArrays } from '../src/helper/combineFrameworkPokemonArrays';
 
 const frameworks: string[] = [
   'React',

@@ -1,4 +1,6 @@
-const combineFrameworkPokemonArrays = (frameworks: string[], pokemon: string[]): DBSeedObject[] => {
+import type { Item } from "../../typedefs/Item";
+
+const combineFrameworkPokemonArrays = (frameworks: string[], pokemon: string[]): Item[] => {
   const maxLength = Math.max(frameworks.length, pokemon.length);
   const result: any[] = [];
 

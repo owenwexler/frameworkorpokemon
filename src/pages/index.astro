@@ -1,5 +1,7 @@
 ---
 import { combinedFrameworksPokemonArray } from '../../data/data';
+
+import Quiz from '../components/Quiz';
 ---
 
 <html lang="en">
@@ -10,9 +12,10 @@ import { combinedFrameworksPokemonArray } from '../../data/data';
 		<meta name="generator" content={Astro.generator} />
 		<title>Framework Or Pokemon?</title>
 	</head>
-	<body class="bg-blue-950">
+	<body class="bg-gradient-to-r from-blue-800 to-blue-950">
 		<div class="flex flex-col items-center justify-center text-center p-4">
 			<h1 class="text-4xl text-gray-200 font-bold">Framework Or Pokemon?</h1>
 		</div>
+		<Quiz data={combinedFrameworksPokemonArray} client:load />
 	</body>
 </html>
