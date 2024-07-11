@@ -16,13 +16,11 @@ export const Quiz: React.FC<QuizProps> = ({ data }) => {
     return data[getRandomInt(data.length)]
   }
 
-  const [currentItem, setCurrentItem] = useState<Item>({ id: 0, name: '', type: 'framework' }); // this causes a bug where the data changes when the correct and wrong toasts are rendered and the wrong thing is shown in the toast.  TODO: fix this
+  const [currentItem, setCurrentItem] = useState<Item>({ id: 0, name: '', type: 'framework' });
   const [answerState, setAnswerState] = useState<'pending' | 'correct' | 'wrong'>('pending');
   const [numCorrect, setNumCorrect] = useState<number>(0);
   const [numWrong, setNumWrong] = useState<number>(0);
   const [numTotal, setNumTotal] = useState<number>(0);
-
-  console.log('currentItem: ', currentItem);
 
   useEffect(() => {
     setCurrentItem(getRandomItem())
@@ -46,6 +44,8 @@ export const Quiz: React.FC<QuizProps> = ({ data }) => {
   }
 
   const guess = (answer: string) => {
+    if (answerState !== 'pending') { return ; }
+
     const item = currentItem;
     if (answer === item.type) {
       correct();
@@ -57,7 +57,7 @@ export const Quiz: React.FC<QuizProps> = ({ data }) => {
   return (
     <>
       <div className="flex flex-col items-center justify-center text-center p-6 m-5 rounded-lg bg-yellow-600 border border-blue-600">
-        <p className="text-lg text-white font-bold">{currentItem.name}</p>
+        <p className="text-3xl text-white font-bold">{currentItem.name}</p>
       </div>
       <div className="flex flex-row items-center justify-around p-5 space-x-6">
         <Button
@@ -74,6 +74,19 @@ export const Quiz: React.FC<QuizProps> = ({ data }) => {
           <ButtonText text="Pokemon" />
         </Button>
       </div>
+      <div className="flex flex-row items-center justify-center space-x-4">
+        <p className="text-3xl text-white">Correct: {numCorrect}</p>
+        <p className="text-3xl text-white">Wrong: {numWrong}</p>
+      </div>
+      {
+        numTotal > 0
+        ?
+        <div className="flex flex-row items-center justify-center space-x-4">
+          <p className="text-2xl text-white">% right: {numCorrect / numTotal}%</p>
+        </div>
+        :
+        null
+      }
       {
         answerState === 'correct'
         ?
