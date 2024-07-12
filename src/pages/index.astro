@@ -1,8 +1,19 @@
 ---
 import { getAllItems } from '../../db/models';
+import type { Item } from '../../typedefs/Item';
 import Quiz from '../components/Quiz';
 
-const data = await getAllItems();
+let isLoading = true;
+let data: Item[] = [];
+let isError = false;
+
+try {
+	data = await getAllItems();
+	isLoading = false;
+} catch(err) {
+	isError = true;
+	data = [];
+}
 ---
 
 <html lang="en">
@@ -19,7 +30,12 @@ const data = await getAllItems();
 				<img src="/images/fptitle.png" alt="Framework Or Pokemon?" />
 				<h2 class="text-xl text-gray-200 font-bold mt-2">Is this a programming framework or a Pokemon?</h1>
 			</div>
-			<Quiz data={data} client:load />
+			<Quiz
+				data={data}
+				isLoading={isLoading}
+				isError={isError}
+				client:load
+			/>
 		</main>
 	</body>
 </html>

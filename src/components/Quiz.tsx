@@ -12,12 +12,20 @@ import NameSign from "./style/NameSign";
 import Scoreboard from "./Scoreboard";
 import AnswerStatusSign from "./style/AnswerStatusSign";
 import NextButton from "./style/NextButton";
+import Spinner from "./style/Spinner";
+import Error from "./Error";
 
 interface QuizProps {
   data: Item[];
+  isLoading: boolean;
+  isError: boolean;
 }
 
-const Quiz: FunctionComponent<QuizProps> = ({ data }) => {
+const Quiz: FunctionComponent<QuizProps> = ({ data, isLoading, isError }) => {
+  if (isLoading) { return <Spinner /> }
+  if (isError) { return <Error /> }
+
+
   const getRandomItem = () => {
     return data[getRandomInt(data.length)]
   }
