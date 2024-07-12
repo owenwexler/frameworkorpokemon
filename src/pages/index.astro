@@ -3,7 +3,6 @@ import { getAllItems } from '../../db/models';
 import Quiz from '../components/Quiz';
 
 const data = await getAllItems();
-console.log(data);
 ---
 
 <html lang="en">
@@ -16,7 +15,7 @@ console.log(data);
 	</head>
 	<body class="bg-gradient-to-r from-blue-800 to-blue-950">
 		<main id="container-main" class="flex flex-col items-center justify-center text-black">
-      <div id="container-inner" class="container flex flex-col items-center justify-center text-center gap-8 px-4 pt-10 pb-5">
+      <div id="container-inner" class="container flex flex-col items-center justify-center text-center gap-4 px-4 pt-4 pb-4">
 				<img src="/images/fptitle.png" alt="Framework Or Pokemon?" />
 				<h2 class="text-xl text-gray-200 font-bold mt-2">Is this a programming framework or a Pokemon?</h1>
 			</div>

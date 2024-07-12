@@ -86,6 +86,8 @@ const Quiz: FunctionComponent<QuizProps> = ({ data }) => {
         numTotal={numTotal}
       />
 
+      <p className="mt-4"></p>
+
       {
         answerState === 'correct'
         ?
