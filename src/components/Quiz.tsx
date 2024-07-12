@@ -7,13 +7,17 @@ import { useEffect, useState } from 'preact/hooks';
 import ButtonText from "./style/ButtonText";
 
 import type { FunctionComponent } from 'preact';
+import NameSign from "./style/NameSign";
+
+import Scoreboard from "./Scoreboard";
+import AnswerStatusSign from "./style/AnswerStatusSign";
+import NextButton from "./style/NextButton";
 
 interface QuizProps {
   data: Item[];
 }
 
-
-export const Quiz: FunctionComponent<QuizProps> = ({ data }) => {
+const Quiz: FunctionComponent<QuizProps> = ({ data }) => {
   const getRandomItem = () => {
     return data[getRandomInt(data.length)]
   }
@@ -23,10 +27,6 @@ export const Quiz: FunctionComponent<QuizProps> = ({ data }) => {
   const [numCorrect, setNumCorrect] = useState<number>(0);
   const [numWrong, setNumWrong] = useState<number>(0);
   const [numTotal, setNumTotal] = useState<number>(0);
-
-  useEffect(() => {
-    setCurrentItem(getRandomItem())
-  }, [])
 
   const reset = () => {
     setAnswerState('pending');
@@ -56,12 +56,15 @@ export const Quiz: FunctionComponent<QuizProps> = ({ data }) => {
     }
   }
 
+  useEffect(() => {
+    setCurrentItem(getRandomItem())
+  }, [])
+
   return (
     <>
-      <div className="flex flex-col items-center justify-center text-center p-6 m-5 rounded-lg bg-yellow-600 border border-blue-600">
-        <p className="text-3xl text-white font-bold">{currentItem.name}</p>
-      </div>
-      <div className="flex flex-row items-center justify-around p-5 space-x-6">
+      <NameSign name={currentItem.name} />
+
+      <div className="flex flex-row max-sm:flex-col items-center text-center justify-around max-sm:justify-center p-5 space-x-6 max-sm:space-x-0 max-sm:space-y-4">
         <Button
           id="btn-framework"
           onClick={() => guess('framework')}
@@ -76,34 +79,30 @@ export const Quiz: FunctionComponent<QuizProps> = ({ data }) => {
           <ButtonText text="Pokemon" />
         </Button>
       </div>
-      <div className="flex flex-row items-center justify-center space-x-4">
-        <p className="text-3xl text-white">Correct: {numCorrect}</p>
-        <p className="text-3xl text-white">Wrong: {numWrong}</p>
-      </div>
-      {
-        numTotal > 0
-        ?
-        <div className="flex flex-row items-center justify-center space-x-4">
-          <p className="text-2xl text-white">% right: {numCorrect / numTotal}%</p>
-        </div>
-        :
-        null
-      }
+
+      <Scoreboard
+        numCorrect={numCorrect}
+        numWrong={numWrong}
+        numTotal={numTotal}
+      />
+
       {
         answerState === 'correct'
         ?
-        <div className="flex flex-col items-center justify-center text-center p-6 m-5 rounded-lg bg-green-700 border border-blue-600">
-          <p className="text-lg text-white font-bold">Correct!  {getIsAText(currentItem)}.</p>
-        </div>
+        <AnswerStatusSign
+          currentItem={currentItem}
+          status="correct"
+        />
         :
         null
       }
       {
         answerState === 'wrong'
         ?
-        <div className="flex flex-col items-center justify-center text-center p-6 m-5 rounded-lg bg-red-700 border border-blue-600">
-          <p className="text-lg text-white font-bold">Wrong answer!  {getIsAText(currentItem)}.</p>
-        </div>
+        <AnswerStatusSign
+          currentItem={currentItem}
+          status="wrong"
+        />
         :
         null
       }
@@ -111,13 +110,9 @@ export const Quiz: FunctionComponent<QuizProps> = ({ data }) => {
         answerState !== 'pending'
         ?
         <div className="flex flex-row items-center justify-center">
-          <button
-            id="next-button"
-            className="bg-blue-600 rounded-lg border border-double border-yellow-600 p-4 px-16 text-white active:scale-95 transition-transform duration-[8ms]"
+          <NextButton
             onClick={() => reset()}
-          >
-            <ButtonText text="NEXT >>>" />
-          </button>
+          />
         </div>
         :
         null
