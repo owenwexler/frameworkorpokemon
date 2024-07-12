@@ -7,7 +7,7 @@ import Quiz from '../components/Quiz';
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.png" />
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
 		<title>Framework Or Pokemon?</title>
@@ -15,7 +15,7 @@ import Quiz from '../components/Quiz';
 	<body class="bg-gradient-to-r from-blue-800 to-blue-950">
 		<main id="container-main" class="flex flex-col items-center justify-center text-black">
       <div id="container-inner" class="container flex flex-col items-center justify-center text-center gap-8 px-4 pt-10 pb-5">
-				<h1 class="text-4xl text-gray-200 font-bold mb-1">Framework Or Pokemon?</h1>
+				<img src="/images/fptitle.png" alt="Framework Or Pokemon?" />
 				<h2 class="text-xl text-gray-200 font-bold mt-2">Is the below a programming framework or a Pokemon?</h1>
 			</div>
 			<Quiz data={combinedFrameworksPokemonArray} client:load />
