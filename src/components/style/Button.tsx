@@ -1,4 +1,4 @@
-import type { FC } from 'react';
+import type { FunctionComponent } from 'preact';
 
 interface ButtonProps {
   id: string;
@@ -6,7 +6,7 @@ interface ButtonProps {
   children: React.ReactNode;
 }
 
-export const Button: FC<ButtonProps> = ({ id, onClick, children }) => {
+export const Button: FunctionComponent<ButtonProps> = ({ id, onClick, children }) => {
   const handleClick = () => {
     onClick();
   }

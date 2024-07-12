@@ -3,15 +3,17 @@ import type { Item } from "../../typedefs/Item";
 import { getRandomInt } from "../helper/getRandomInt";
 import { Button } from "./style/Button";
 import { getIsAText } from "../helper/getIsAText";
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'preact/hooks';
 import ButtonText from "./style/ButtonText";
+
+import type { FunctionComponent } from 'preact';
 
 interface QuizProps {
   data: Item[];
 }
 
 
-export const Quiz: React.FC<QuizProps> = ({ data }) => {
+export const Quiz: FunctionComponent<QuizProps> = ({ data }) => {
   const getRandomItem = () => {
     return data[getRandomInt(data.length)]
   }
@@ -44,7 +46,7 @@ export const Quiz: React.FC<QuizProps> = ({ data }) => {
   }
 
   const guess = (answer: string) => {
-    if (answerState !== 'pending') { return ; }
+    if (answerState !== 'pending') { return; }
 
     const item = currentItem;
     if (answer === item.type) {
