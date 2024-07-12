@@ -1,7 +1,9 @@
 ---
-import { combinedFrameworksPokemonArray } from '../../data/data';
-
+import { getAllItems } from '../../db/models';
 import Quiz from '../components/Quiz';
+
+const data = await getAllItems();
+console.log(data);
 ---
 
 <html lang="en">
@@ -16,9 +18,9 @@ import Quiz from '../components/Quiz';
 		<main id="container-main" class="flex flex-col items-center justify-center text-black">
       <div id="container-inner" class="container flex flex-col items-center justify-center text-center gap-8 px-4 pt-10 pb-5">
 				<img src="/images/fptitle.png" alt="Framework Or Pokemon?" />
-				<h2 class="text-xl text-gray-200 font-bold mt-2">Is the below a programming framework or a Pokemon?</h1>
+				<h2 class="text-xl text-gray-200 font-bold mt-2">Is this a programming framework or a Pokemon?</h1>
 			</div>
-			<Quiz data={combinedFrameworksPokemonArray} client:load />
+			<Quiz data={data} client:load />
 		</main>
 	</body>
 </html>
