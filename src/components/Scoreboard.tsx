@@ -13,7 +13,7 @@ interface ScoreboardProps {
 
 const Scoreboard: FunctionComponent<ScoreboardProps> = ({ numCorrect, numWrong, numTotal }) => {
   return (
-    <div className="flex flex-col items-center justify-center space-y-1">
+    <div className="flex flex-col items-center justify-center space-y-1 max-sm:space-y-0">
       <div className="flex flex-row items-center justify-around">
         <Scorecard
           status="correct"
@@ -28,7 +28,7 @@ const Scoreboard: FunctionComponent<ScoreboardProps> = ({ numCorrect, numWrong, 
         numTotal > 0
         ?
           <ScorecardContainer>
-            <p className="text-2xl max-sm:text-xl text-white">% right: {toPercentage(numCorrect / numTotal)}</p>
+            <p className="text-2xl max-sm:text-lg text-white">% right: {toPercentage(numCorrect / numTotal)}</p>
           </ScorecardContainer>
         :
           null

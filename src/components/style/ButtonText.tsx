@@ -7,7 +7,7 @@ interface ButtonTextProps {
 
 const ButtonText: FunctionComponent<ButtonTextProps> = ({ text }) => {
   return (
-    <h1 className="text-2xl text-white font-bold">
+    <h1 className="text-2xl max-sm:text-lg text-white font-bold">
       {text}
     </h1>
   )

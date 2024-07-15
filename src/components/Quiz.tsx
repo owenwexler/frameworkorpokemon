@@ -72,7 +72,7 @@ const Quiz: FunctionComponent<QuizProps> = ({ data, isLoading, isError }) => {
     <>
       <NameSign name={currentItem.name} />
 
-      <div className="flex flex-row max-sm:flex-col items-center text-center justify-around max-sm:justify-center p-5 space-x-6 max-sm:space-x-0 max-sm:space-y-4">
+      <div className="flex flex-row max-sm:flex-col items-center text-center justify-around max-sm:justify-center px-5 pt-5 pb-5 max-sm:pt-4 max-sm:pb-2 space-x-6 max-sm:space-x-0 max-sm:space-y-4">
         <Button
           id="btn-framework"
           onClick={() => guess('framework')}
@@ -94,7 +94,7 @@ const Quiz: FunctionComponent<QuizProps> = ({ data, isLoading, isError }) => {
         numTotal={numTotal}
       />
 
-      <p className="mt-4"></p>
+      <p className="mt-4 max-sm:mt-2"></p>
 
       {
         answerState === 'correct'

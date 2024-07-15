@@ -8,7 +8,7 @@ interface ScorecardProps {
 }
 
 const Scorecard: FunctionComponent<ScorecardProps> = ({ status, num }) => {
-  const baseTextClasses = 'text-2xl max-sm:text-2xl font-bold';
+  const baseTextClasses = 'text-2xl max-sm:text-lg font-bold';
   return (
     <ScorecardContainer>
       <div className="flex flex-row items-center justify-center space-x-4">

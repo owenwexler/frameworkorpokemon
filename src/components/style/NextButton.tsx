@@ -12,7 +12,7 @@ const NextButton: FunctionComponent<NextButtonProps> = ({ onClick }) => {
   return (
     <button
       id="next-button"
-      className="bg-blue-600 rounded-lg border border-double border-yellow-600 p-4 px-16 text-white active:scale-95 transition-transform duration-[8ms]"
+      className="bg-blue-600 rounded-lg border border-double border-yellow-600 py-4 max-sm:py-2 px-16 text-white active:scale-95 transition-transform duration-[8ms]"
       onClick={handleClick}
     >
       <ButtonText text="NEXT >>>" />
