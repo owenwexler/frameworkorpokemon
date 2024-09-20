@@ -35,10 +35,20 @@ const Quiz: FunctionComponent<QuizProps> = ({ data, isLoading, isError }) => {
   const [numCorrect, setNumCorrect] = useState<number>(0);
   const [numWrong, setNumWrong] = useState<number>(0);
   const [numTotal, setNumTotal] = useState<number>(0);
+  const seen: { [key: string]: boolean } = {};
 
   const reset = () => {
     setAnswerState('pending');
-    setCurrentItem(getRandomItem());
+    let newItem: Item;
+    newItem = getRandomItem();
+    if (seen[newItem.name as keyof typeof seen]) {
+      newItem = getRandomItem();
+      seen[newItem.name] = true;
+      setCurrentItem(newItem);
+    } else {
+      seen[newItem.name] = true;
+      setCurrentItem(newItem);
+    }
   }
 
   const correct = () => {
