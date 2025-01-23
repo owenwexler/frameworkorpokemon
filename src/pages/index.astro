@@ -2,13 +2,16 @@
 import { getAllItems } from '../../db/models';
 import type { Item } from '../../typedefs/Item';
 import Quiz from '../components/Quiz';
+import testData from '../../data/testData.json' assert { type: 'json' }
+
+const viteEnv = import.meta.env.VITE_ENV;
 
 let isLoading = true;
 let data: Item[] = [];
 let isError = false;
 
 try {
-	data = await getAllItems();
+	data = viteEnv === 'testing' ? testData : await getAllItems();
 	isLoading = false;
 } catch(err) {
 	isError = true;
@@ -27,17 +30,18 @@ try {
 	<body class="bg-gradient-to-r from-blue-800 to-blue-950">
 		<main id="container-main" class="flex flex-col items-center justify-center text-black">
       <div id="container-inner" class="container flex flex-col items-center justify-center text-center max-sm:gap-1 px-4 pt-4 max-sm:pt-2 pb-4">
-				<img src="/images/fptitle.png" alt="Framework Or Pokemon?" />
-				<h2 class="text-2xl max-sm:text-md text-gray-200 font-bold mt-2">Is this a programming framework or a Pokemon?</h1>
+				<img id="logo" src="/images/fptitle.png" alt="Framework Or Pokemon?" />
+				<h2 id="fop-question" class="text-2xl max-sm:text-md text-gray-200 font-bold mt-2">Is this a programming framework or a Pokemon?</h1>
 			</div>
 			<Quiz
 				data={data}
 				isLoading={isLoading}
 				isError={isError}
+				env={viteEnv}
 				client:load
 			/>
 			<div id="footer" class="flex flex-col items-center justify-center text-center mt-4">
-				<p class="text-xl font-bold text-white">Created by Owen Wexler</p>
+				<p id="created-by-text" class="text-xl font-bold text-white">Created by Owen Wexler</p>
 			</div>
 		</main>
 	</body>

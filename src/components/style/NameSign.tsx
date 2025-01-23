@@ -13,7 +13,7 @@ const NameSign: FunctionComponent<NameSignProps> = ({ name }) => {
         ?
           <Spinner />
         :
-          <p className="text-3xl max-sm:text-xl text-white font-bold">{name}</p>
+          <p id="name-sign-text" className="text-3xl max-sm:text-xl text-white font-bold">{name}</p>
       }
     </div>
   )

@@ -19,9 +19,10 @@ interface QuizProps {
   data: Item[];
   isLoading: boolean;
   isError: boolean;
+  env: 'development' | 'production' | 'testing';
 }
 
-const Quiz: FunctionComponent<QuizProps> = ({ data, isLoading, isError }) => {
+const Quiz: FunctionComponent<QuizProps> = ({ data, isLoading, isError, env }) => {
   if (isLoading) { return <Spinner /> }
   if (isError) { return <Error /> }
 
@@ -35,19 +36,33 @@ const Quiz: FunctionComponent<QuizProps> = ({ data, isLoading, isError }) => {
   const [numCorrect, setNumCorrect] = useState<number>(0);
   const [numWrong, setNumWrong] = useState<number>(0);
   const [numTotal, setNumTotal] = useState<number>(0);
+  const [testingIndex, setTestingIndex] = useState<number>(0);
   const seen: { [key: string]: boolean } = {};
 
+  const changeTestingIndex = () => {
+    if (testingIndex >= 10) {
+      setTestingIndex(0);
+    } else {
+      setTestingIndex(testingIndex + 1);
+    }
+  }
+
   const reset = () => {
+    changeTestingIndex();
     setAnswerState('pending');
     let newItem: Item;
-    newItem = getRandomItem();
-    if (seen[newItem.name as keyof typeof seen]) {
-      newItem = getRandomItem();
-      seen[newItem.name] = true;
+    newItem = env === 'testing' ? data[testingIndex + 1] : getRandomItem();
+    if (env === 'testing') {
       setCurrentItem(newItem);
     } else {
-      seen[newItem.name] = true;
-      setCurrentItem(newItem);
+      if (seen[newItem.name as keyof typeof seen]) {
+        newItem = getRandomItem();
+        seen[newItem.name] = true;
+        setCurrentItem(newItem);
+      } else {
+        seen[newItem.name] = true;
+        setCurrentItem(newItem);
+      }
     }
   }
 
@@ -75,7 +90,9 @@ const Quiz: FunctionComponent<QuizProps> = ({ data, isLoading, isError }) => {
   }
 
   useEffect(() => {
-    setCurrentItem(getRandomItem())
+    setTestingIndex(0);
+    // if in the testing environment, set the first question to the first one in the dataset, but set the first question to a random question in any other environment
+    setCurrentItem(env === 'testing' ? data[testingIndex] : getRandomItem())
   }, [])
 
   return (
@@ -91,7 +108,7 @@ const Quiz: FunctionComponent<QuizProps> = ({ data, isLoading, isError }) => {
         </Button>
 
         <Button
-          id="btn-framework"
+          id="btn-pokemon"
           onClick={() => guess('pokemon')}
         >
           <ButtonText text="Pokemon" />
