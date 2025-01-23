@@ -14,7 +14,7 @@ const AnswerStatusSign: FunctionComponent<AnswerStatusSignProps> = ({ currentIte
 
   return (
     <div className={divClasses}>
-      <p className="text-lg max-sm:text-sm text-white font-bold">{status === 'wrong' ? 'Wrong answer!' : 'Correct!'} {getIsAText(currentItem)}.</p>
+      <p id="answer-status-text" className="text-lg max-sm:text-sm text-white font-bold">{status === 'wrong' ? 'Wrong answer!' : 'Correct!'} {getIsAText(currentItem)}.</p>
     </div>
   )
 }

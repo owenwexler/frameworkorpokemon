@@ -28,7 +28,7 @@ const Scoreboard: FunctionComponent<ScoreboardProps> = ({ numCorrect, numWrong, 
         numTotal > 0
         ?
           <ScorecardContainer>
-            <p className="text-2xl max-sm:text-lg text-white">% right: {toPercentage(numCorrect / numTotal)}</p>
+            <p id="percent-right-text" className="text-2xl max-sm:text-lg text-white">% right: {toPercentage(numCorrect / numTotal)}</p>
           </ScorecardContainer>
         :
           null
