@@ -1,5 +1,9 @@
 import { expect, type Page } from "@playwright/test";
 
+const yellowBGColor = 'rgb(202, 138, 4)';
+const greenBGColor =  'rgb(21, 128, 61)';
+const redBGColor = 'rgb(185, 28, 28)';
+
 const setMobileViewport = async (page: Page) => {
   await page.setViewportSize({ width: 390, height: 844 });
   return;
@@ -20,6 +24,8 @@ const checkNameSign = async (page: Page, args: { name: string }) => {
     name
   } = args;
 
+  await expect(page.locator('#name-sign')).toBeVisible();
+  await expect(page.locator('#name-sign')).toHaveCSS('background-color', yellowBGColor);
   await expect(page.locator('#name-sign-text')).toBeVisible();
   await expect(page.locator('#name-sign-text')).toContainText(name);
 }
@@ -40,12 +46,12 @@ const checkStaticElements = async (page: Page) => {
   await expect(page.locator('#scorecard-status-text-wrong')).toContainText('Wrong:');
 }
 
-interface CheckScoreCardArgs {
+interface Scores {
   correct: number;
   wrong: number;
 }
 
-const checkScorecard = async (page: Page, args: CheckScoreCardArgs) => {
+const checkScorecard = async (page: Page, args: Scores) => {
   const {
     correct,
     wrong
@@ -56,11 +62,89 @@ const checkScorecard = async (page: Page, args: CheckScoreCardArgs) => {
   await expect(page.locator('#scorecard-status-number-wrong')).toContainText(wrong.toString());
 }
 
+interface CheckAnswerStatusCardArgs {
+  status: 'correct' | 'wrong';
+  name: string;
+  type: 'framework' | 'pokemon';
+}
+
+const checkAnswerStatusCard = async (page: Page, args: CheckAnswerStatusCardArgs) => {
+  const { status, name, type } = args;
+
+  const answerStatusCard = page.locator('#answer-status-card');
+  const colorCSS = status === 'correct' ? greenBGColor : redBGColor;
+  await expect(answerStatusCard).toBeVisible();
+  await expect(answerStatusCard).toHaveCSS('background-color', colorCSS);
+
+  const text = `${status === 'correct' ? 'Correct!' : 'Wrong answer!'} ${name} is a ${type === 'pokemon' ? 'Pokemon.' : 'framework.'}`;
+  await expect(page.locator('#answer-status-text')).toContainText(text);
+}
+
+const checkPercentRight = async (page: Page, percent: string) => {
+  await expect(page.locator('#percent-right-text')).toContainText(`% right: ${percent}`);
+}
+
+const clickNext = async (page: Page) => {
+  await page.getByRole('button', { name: 'NEXT >>>' }).click();
+}
+
+interface PlayRoundArgs {
+  name: string;
+  expectedInitialScores: Scores;
+  expectedInitialPercentRight?: string;
+  guess: 'Framework' | 'Pokemon';
+  guessStatus: 'correct' | 'wrong'; // is the test making a correct or wrong guess
+  correctType: 'framework' | 'pokemon';
+  expectedNewScores: Scores;
+  expectedNewPercentRight: string;
+}
+
+// the core test functions basically are repeating the steps in these functions 6 times so why not make it a function
+const playRound = async (page: Page, args: PlayRoundArgs) => {
+  const {
+    name,
+    expectedInitialScores,
+    expectedInitialPercentRight,
+    guess,
+    guessStatus,
+    correctType,
+    expectedNewScores,
+    expectedNewPercentRight,
+  } = args;
+
+  await checkNameSign(page, { name });
+  await checkScorecard(page, expectedInitialScores);
+
+  // the first question will not have an initial percent right so this is an optional field
+  if (expectedInitialPercentRight) {
+    await checkPercentRight(page, expectedInitialPercentRight);
+  }
+
+  await page.getByRole('button', { name: guess }).click();
+
+  await checkScorecard(page, expectedNewScores);
+
+  await checkPercentRight(page, expectedNewPercentRight);
+  await checkAnswerStatusCard(page,
+    {
+      status: guessStatus,
+      name,
+      type: correctType
+    }
+  );
+
+  await clickNext(page);
+}
+
 export {
   setMobileViewport,
   setTabletViewport,
   setDesktopViewport,
   checkNameSign,
   checkStaticElements,
-  checkScorecard
+  checkScorecard,
+  checkAnswerStatusCard,
+  checkPercentRight,
+  clickNext,
+  playRound
 }
