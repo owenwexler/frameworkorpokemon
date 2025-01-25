@@ -40,9 +40,27 @@ const checkStaticElements = async (page: Page) => {
   await expect(page.locator('#scorecard-status-text-wrong')).toContainText('Wrong:');
 }
 
+interface CheckScoreCardArgs {
+  correct: number;
+  wrong: number;
+}
+
+const checkScorecard = async (page: Page, args: CheckScoreCardArgs) => {
+  const {
+    correct,
+    wrong
+  } = args;
+
+
+  await expect(page.locator('#scorecard-status-number-correct')).toContainText(correct.toString());
+  await expect(page.locator('#scorecard-status-number-wrong')).toContainText(wrong.toString());
+}
+
 export {
   setMobileViewport,
   setTabletViewport,
   setDesktopViewport,
-  checkStaticElements
+  checkNameSign,
+  checkStaticElements,
+  checkScorecard
 }
