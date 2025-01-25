@@ -15,12 +15,12 @@
     "test:codegen": "npx playwright codegen http://localhost:3000"
   },
   "dependencies": {
-    "@astrojs/check": "^0.8.1",
-    "@astrojs/node": "^8.3.4",
-    "@astrojs/preact": "^3.5.0",
-    "@astrojs/tailwind": "^5.1.0",
+    "@astrojs/check": "^0.9.4",
+    "@astrojs/node": "^9.0.2",
+    "@astrojs/preact": "^4.0.3",
+    "@astrojs/tailwind": "^5.1.5",
     "@libsql/client": "^0.7.0",
-    "astro": "^4.11.5",
+    "astro": "^5.1.9",
     "drizzle-orm": "^0.32.0",
     "ioredis": "^5.4.1",
     "preact": "^10.22.1",
