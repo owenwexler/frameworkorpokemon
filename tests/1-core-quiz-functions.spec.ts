@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
 import { playRound } from './globalTestFunctions/globalTestFunctions';
 
 test.describe('Core Quiz Functions', () => {
@@ -54,7 +54,7 @@ test.describe('Core Quiz Functions', () => {
       expectedNewPercentRight: '50.00%'
     });
 
-    // question: Handlebars, it is a pokemon, guess correctly
+    // question: Handlebars, it is a framework, guess correctly
     await playRound(page, {
       name: 'Handlebars',
       expectedInitialScores: { correct: 2, wrong: 2 },
@@ -66,23 +66,28 @@ test.describe('Core Quiz Functions', () => {
       expectedNewPercentRight: '60.00%'
     });
 
-    await expect(page.locator('#scorecard-status-number-correct')).toContainText('3');
-    await expect(page.locator('#scorecard-status-number-wrong')).toContainText('2');
-    await expect(page.locator('#percent-right-text')).toContainText('% right: 60.00%');
-    await page.getByRole('button', { name: 'Pokemon' }).click();
-    await expect(page.locator('#scorecard-status-number-correct')).toContainText('4');
-    await expect(page.locator('#scorecard-status-number-wrong')).toContainText('2');
-    await expect(page.locator('#percent-right-text')).toContainText('% right: 66.67%');
-    await expect(page.locator('#answer-status-text')).toContainText('Correct! Charmeleon is a Pokemon.');
-    await page.getByRole('button', { name: 'NEXT >>>' }).click();
-    await expect(page.locator('#name-sign-text')).toContainText('Angular');
-    await expect(page.locator('#scorecard-status-number-correct')).toContainText('4');
-    await expect(page.locator('#scorecard-status-number-wrong')).toContainText('2');
-    await expect(page.locator('#percent-right-text')).toContainText('% right: 66.67%');
-    await page.getByRole('button', { name: 'Framework' }).click();
-    await expect(page.locator('#scorecard-status-number-correct')).toContainText('5');
-    await expect(page.locator('#scorecard-status-number-wrong')).toContainText('2');
-    await expect(page.locator('#percent-right-text')).toContainText('% right: 71.43%');
-    await expect(page.locator('#answer-status-text')).toContainText('Correct! Angular is a framework.');
+    // question: Charmelon, it is a pokemon, guess correctly
+    await playRound(page, {
+      name: 'Charmeleon',
+      expectedInitialScores: { correct: 3, wrong: 2 },
+      expectedInitialPercentRight: '60.00%',
+      guess: 'Pokemon',
+      guessStatus: 'correct',
+      correctType: 'pokemon',
+      expectedNewScores: { correct: 4, wrong: 2 },
+      expectedNewPercentRight: '66.67%'
+    });
+
+    // question: Angular, it is a framework, guess correctly
+    await playRound(page, {
+      name: 'Angular',
+      expectedInitialScores: { correct: 4, wrong: 2 },
+      expectedInitialPercentRight: '66.67%',
+      guess: 'Framework',
+      guessStatus: 'correct',
+      correctType: 'framework',
+      expectedNewScores: { correct: 5, wrong: 2 },
+      expectedNewPercentRight: '71.43%'
+    });
   });
 });
