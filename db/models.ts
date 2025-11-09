@@ -38,7 +38,6 @@ const getAllItems = async (): Promise<Item[]> => {
       return JSON.parse(cacheResponse) as Item[];
     } else {
       const response = await turso.execute('SELECT * FROM items;');
-      console.log(response);
       const result = processItems(response.rows as unknown as ItemDBResponse[]);
       redis.set(CACHE_KEY, JSON.stringify(result), 'EX', 60 * 60 * 60);
       return result as Item[];
