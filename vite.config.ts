@@ -11,10 +11,10 @@ const config = defineConfig({
   resolve: { tsconfigPaths: true },
   plugins: [
     devtools(),
-    nitro({ rollupConfig: { external: [/^@sentry\//] } }),
     tailwindcss(),
-    tanstackStart(),
-    viteReact(),
+    tanstackStart(), // 1. Must run first to compile router assets & intercept client/server boundaries
+    nitro({ rollupConfig: { external: [/^@sentry\//] } }), // 2. Wraps the output into a standalone node-server
+    viteReact(),     // 3. Transforms standard React TSX files last
   ],
 });
 

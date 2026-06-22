@@ -7,7 +7,9 @@ export const env = createEnv({
     TURSO_AUTH_TOKEN: z.string(),
     PORT: z.string(), // do we still need an environment variable for PORT?
     REDIS_CONNECTION: z.string(),
-    VITE_ENV: z.enum(['production', 'testing', 'development'])
+    VITE_ENV: z.enum(['production', 'testing', 'development']),
+    NODE_VERSION: z.string(),
+    NITRO_PRESET: z.enum(['render_com', 'digitalocean', 'cloudflare', 'bun', 'netlify', 'vercel', 'node-server'])
   },
  
   /**
@@ -28,7 +30,9 @@ export const env = createEnv({
     TURSO_AUTH_TOKEN: process.env.TURSO_AUTH_TOKEN,
     PORT: process.env.PORT,
     REDIS_CONNECTION: process.env.REDIS_CONNECTION,
-    VITE_ENV: process.env.VITE_ENV
+    VITE_ENV: process.env.VITE_ENV,
+    NODE_VERSION: process.env.NODE_VERSION, 
+    NITRO_PRESET: process.env.NITRO_PRESET
   },
  
   /**
