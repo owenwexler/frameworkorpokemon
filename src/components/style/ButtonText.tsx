@@ -1,11 +1,11 @@
-import type { FunctionComponent } from 'preact';
+import type { FC } from 'react';
 
 interface ButtonTextProps {
   text: string;
 }
 
 
-const ButtonText: FunctionComponent<ButtonTextProps> = ({ text }) => {
+const ButtonText: FC<ButtonTextProps> = ({ text }) => {
   return (
     <h1 id={`button-text-${text.toLowerCase()}`} className="text-2xl max-sm:text-lg text-white font-bold">
       {text}

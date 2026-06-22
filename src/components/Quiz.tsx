@@ -1,12 +1,11 @@
 
-import type { Item } from "../../typedefs/Item";
 import { getRandomInt } from "../helper/getRandomInt";
 import { Button } from "./style/Button";
 import { getIsAText } from "../helper/getIsAText";
-import { useEffect, useState } from 'preact/hooks';
+import { useEffect, useState } from 'react';
 import ButtonText from "./style/ButtonText";
 
-import type { FunctionComponent } from 'preact';
+import type { FC } from 'react';
 import NameSign from "./style/NameSign";
 
 import Scoreboard from "./Scoreboard";
@@ -14,6 +13,7 @@ import AnswerStatusSign from "./style/AnswerStatusSign";
 import NextButton from "./style/NextButton";
 import Spinner from "./style/Spinner";
 import Error from "./Error";
+import type { Item } from "#/typedefs/Item";
 
 interface QuizProps {
   data: Item[];
@@ -22,10 +22,9 @@ interface QuizProps {
   env: 'development' | 'production' | 'testing';
 }
 
-const Quiz: FunctionComponent<QuizProps> = ({ data, isLoading, isError, env }) => {
+const Quiz: FC<QuizProps> = ({ data, isLoading, isError, env }) => {
   if (isLoading) { return <Spinner /> }
   if (isError) { return <Error /> }
-
 
   const getRandomItem = () => {
     return data[getRandomInt(data.length)]

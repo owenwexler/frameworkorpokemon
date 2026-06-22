@@ -1,8 +1,9 @@
-import { expect, type Page } from "@playwright/test";
+import { expect } from "@playwright/test";
+import type { Page } from '@playwright/test';
 
-const yellowBGColor = 'rgb(202, 138, 4)';
-const greenBGColor =  'rgb(21, 128, 61)';
-const redBGColor = 'rgb(185, 28, 28)';
+const yellowBGColor = 'oklch(0.681 0.162 75.834)';
+const greenBGColor =  'oklch(0.527 0.154 150.069)';
+const redBGColor = 'oklch(0.505 0.213 27.518)';
 
 const setMobileViewport = async (page: Page) => {
   await page.setViewportSize({ width: 390, height: 844 });

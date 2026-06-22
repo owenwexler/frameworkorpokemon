@@ -1,6 +1,6 @@
 import { toPercentage } from "../helper/toPercentage";
 
-import type { FunctionComponent } from "preact";
+import type { FC } from "react";
 import Scorecard from "./style/Scorecard";
 import ScorecardContainer from "./style/ScorecardContainer";
 
@@ -11,7 +11,7 @@ interface ScoreboardProps {
   numTotal: number;
 }
 
-const Scoreboard: FunctionComponent<ScoreboardProps> = ({ numCorrect, numWrong, numTotal }) => {
+const Scoreboard: FC<ScoreboardProps> = ({ numCorrect, numWrong, numTotal }) => {
   return (
     <div className="flex flex-col items-center justify-center space-y-1 max-sm:space-y-0">
       <div className="flex flex-row items-center justify-around">
@@ -37,4 +37,4 @@ const Scoreboard: FunctionComponent<ScoreboardProps> = ({ numCorrect, numWrong, 
   )
 }
 
-export default Scoreboard
+export default Scoreboard;

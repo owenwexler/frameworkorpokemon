@@ -1,12 +1,13 @@
-import type { FunctionComponent } from 'preact';
+import React from 'react';
+import type { FC } from 'react';
 
 interface ButtonProps {
   id: string;
   onClick: () => void;
-  children: any; // TODO: find out what the Preact equivalent of React.ReactNode is
+  children: React.ReactNode; 
 }
 
-export const Button: FunctionComponent<ButtonProps> = ({ id, onClick, children }) => {
+export const Button: FC<ButtonProps> = ({ id, onClick, children }) => {
   const handleClick = () => {
     onClick();
   }

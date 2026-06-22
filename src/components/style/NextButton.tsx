@@ -1,10 +1,10 @@
-import type { FunctionComponent } from 'preact';
+import type { FC } from 'react';
 import ButtonText from './ButtonText';
 
 interface NextButtonProps {
   onClick: () => void;
 }
-const NextButton: FunctionComponent<NextButtonProps> = ({ onClick }) => {
+const NextButton: FC<NextButtonProps> = ({ onClick }) => {
   const handleClick = () => {
     onClick();
   }
