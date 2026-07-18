@@ -1,5 +1,4 @@
 import Quiz from '#/components/Quiz';
-import { env } from '#/env';
 import { getData, getViteEnv } from '#/serverFunctions/serverFunctions';
 import { createFileRoute } from '@tanstack/react-router';
 

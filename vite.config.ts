@@ -8,6 +8,11 @@ import tailwindcss from '@tailwindcss/vite';
 import { nitro } from 'nitro/vite';
 
 const config = defineConfig({
+  server: {
+    // 💡 This forces the underlying Nitro/H3 server engine 
+    // to use the native Bun preset instead of defaulting to Node
+    preset: 'bun' 
+  },
   resolve: { tsconfigPaths: true },
   plugins: [
     devtools(),
@@ -16,6 +21,14 @@ const config = defineConfig({
     nitro({ rollupConfig: { external: [/^@sentry\//] } }), // 2. Wraps the output into a standalone node-server
     viteReact(),     // 3. Transforms standard React TSX files last
   ],
+  // this prevents dep errors when RedisClient is imported from bun
+  optimizeDeps: {
+    exclude: ['bun', 'bun:test', 'bun:sqlite']
+  },
+  ssr: {
+    noExternal: [],
+    external: ['bun']
+  }
 });
 
 export default config;

@@ -1,7 +1,7 @@
 import { turso } from './db';
 import type { Item } from '../typedefs/Item';
 
-import redis from './redis/redis';
+import redis from './redis/redis.server';
 import type { ItemDBResponse } from '../typedefs/ItemDBResponse';
 
 const CACHE_KEY = 'fop::data';
@@ -29,6 +29,7 @@ const processItems = (items: ItemDBResponse[]): Item[] => {
     return processItem(item);
   });
 }
+
 
 const getAllItems = async (): Promise<Item[]> => {
   try {

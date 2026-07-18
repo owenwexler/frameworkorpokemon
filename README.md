@@ -5,8 +5,8 @@ Welcome to your new TanStack Start app!
 To run this application:
 
 ```bash
-npm install
-npm run dev
+bun install
+bun run dev
 ```
 
 # Building For Production
@@ -14,15 +14,7 @@ npm run dev
 To build this application for production:
 
 ```bash
-npm run build
-```
-
-## Testing
-
-This project uses [Vitest](https://vitest.dev/) for testing. You can run the tests with:
-
-```bash
-npm run test
+bun run build
 ```
 
 ## Styling
@@ -30,7 +22,7 @@ npm run test
 This project uses [Tailwind CSS](https://tailwindcss.com/) for styling.
 
 ### Removing Tailwind CSS
-
+# DO NOT REMOVE TAILWIND CSS FROM THIS PROJECT
 If you prefer not to use Tailwind CSS:
 
 1. Remove the demo pages in `src/routes/demo/`
