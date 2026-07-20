@@ -10,6 +10,7 @@
     "generate-routes": "tsr generate",
     "build": "bun --bun vite build",
     "preview": "bun --bun vite preview",
+    "start": "bun --bun run .output/server/index.mjs",
     "lint": "eslint",
     "format": "prettier --write . && eslint --fix",
     "check": "prettier --check .",
