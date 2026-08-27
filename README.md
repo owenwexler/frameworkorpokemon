@@ -1,3 +1,40 @@
+# What is Framework Or Pokemon?
+Is that name you're looking at the name of a computer programming framework or a Pokemon?  That question is a meme and I made a quiz app out of it.
+
+## Current Tech Stack
+* Language: [TypeScript](https://typescriptlang.org)
+* Runtime: [Bun](https://bun.sh)
+* Framework: [Tanstack Start](https://tanstack.com/start/latest) 
+* CSS Library: [Tailwind](https://tailwindcss.com/)
+* UI Library: none, all buttons and inputs are custom 
+* Database: [Turso](https://turso.tech)
+* ORM: none
+* Cache: [REDIS](https://redis.io/) for caching quiz data
+* Error-handling library: none
+* Logging: none
+* Environment Variable Validation: [T3-Env](http://env.t3.gg/)
+* Linting: [ESLint](http://eslint.org)
+* Client state management: [Jotai](https://jotai.org/)
+* CI: none
+* Deployment target: [Render.com](https://render.com)
+
+## Setup 
+1.  Make sure you have [Bun](https://bun.sh/) and [REDIS](https://redis.io/lp/get-started2) installed locally.  In some Linux distributions, REDIS is replaced by Valkey under the hood - this shouldn't cause any problems in development.  Please submit an issue if it does.
+2.  Make sure you have a Turso account and API key.  Create a database for Framework or Pokemon.  
+3.  Create a ```.env``` file and set up all environment variables according to the ```.env.example``` file.  Fill in your Turso API key.  Leave the REDIS_URL variable blank ('') for local REDIS in development.  SRW_ENV is necessary to determine whether the environment is development or production in client components.  Set DEV_MODE to "offline" before running the tests.   
+4.  Install all dependencies by typing ```npm install```.  
+5.  Run the development server in offline mode by typing ```npm run dev:offline```.
+6.  Run the tests in UI mode by typing ```npm run test:e2e:ui``` or in CLI mode by typing ```npm run test:e2e:run```.  Make sure they all pass.
+
+## Tests
+Framework Or Pokemon uses [Playwright](https://playwright.dev/) as its testing framework.  Before running the tests, the app must be set to "testing" mode (found in environment variables) which puts the quiz questions in a static order for predictable testing responses.
+
+## Bun
+As of July 2026, Bun replaces Node as the runtime.
+
+## Tanstack Start
+As of June 2026, uses Tanstack Start as its framework.  From July 2024-June 2026, Framework Or Pokemon used Astro and Preact, but has now migrated fully to Tanstack Start.  All evergreen Tanstack Start details are included below.
+
 Welcome to your new TanStack Start app! 
 
 # Getting Started

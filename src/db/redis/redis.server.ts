@@ -9,6 +9,6 @@ function getRedisClient() {
   throw new Error("Redis client can only be initialized on a Bun server environment.");
 }
 
-const client = getRedisClient();
+const redis = getRedisClient();
 
-export default client;
+export default redis;
