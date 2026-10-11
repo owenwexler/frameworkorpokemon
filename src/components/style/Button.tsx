@@ -2,15 +2,15 @@ import React from 'react';
 import type { FC } from 'react';
 
 interface ButtonProps {
-  id: string;
-  onClick: () => void;
-  children: React.ReactNode; 
+  id: string
+  onClick: () => void
+  children: React.ReactNode
 }
 
 export const Button: FC<ButtonProps> = ({ id, onClick, children }) => {
   const handleClick = () => {
     onClick();
-  }
+  };
 
   return (
     <button
@@ -20,5 +20,5 @@ export const Button: FC<ButtonProps> = ({ id, onClick, children }) => {
     >
       {children}
     </button>
-  )
-}
+  );
+};

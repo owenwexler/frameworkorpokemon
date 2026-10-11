@@ -1,4 +1,4 @@
-import { combineFrameworkPokemonArrays } from '../helper/combineFrameworkPokemonArrays'
+import { combineFrameworkPokemonArrays } from '../helper/combineFrameworkPokemonArrays';
 
 const frameworks: string[] = [
   'React',
@@ -149,7 +149,7 @@ const frameworks: string[] = [
   'Storybook',
   'Fresh',
   'Karma',
-]
+];
 
 const pokemon: string[] = [
   'Bulbasaur',
@@ -301,11 +301,11 @@ const pokemon: string[] = [
   'Seviper',
   'Castform',
   'Kecle',
-]
+];
 
 const combinedFrameworksPokemonArray = combineFrameworkPokemonArrays(
   frameworks,
   pokemon,
-)
+);
 
-export { combinedFrameworksPokemonArray }
+export { combinedFrameworksPokemonArray };

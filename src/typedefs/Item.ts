@@ -1,9 +1,7 @@
 interface Item {
-  id: number;
-  name: string;
-  type: string;
+  id: number
+  name: string
+  type: string
 }
 
-export type {
-  Item
-}
+export type { Item };

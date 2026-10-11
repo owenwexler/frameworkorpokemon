@@ -2,12 +2,12 @@ import type { FC } from 'react';
 import ButtonText from './ButtonText';
 
 interface NextButtonProps {
-  onClick: () => void;
+  onClick: () => void
 }
 const NextButton: FC<NextButtonProps> = ({ onClick }) => {
   const handleClick = () => {
     onClick();
-  }
+  };
 
   return (
     <button
@@ -17,7 +17,7 @@ const NextButton: FC<NextButtonProps> = ({ onClick }) => {
     >
       <ButtonText text="NEXT >>>" />
     </button>
-  )
-}
+  );
+};
 
 export default NextButton;

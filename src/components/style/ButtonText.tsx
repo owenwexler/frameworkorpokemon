@@ -1,16 +1,18 @@
 import type { FC } from 'react';
 
 interface ButtonTextProps {
-  text: string;
+  text: string
 }
-
 
 const ButtonText: FC<ButtonTextProps> = ({ text }) => {
   return (
-    <h1 id={`button-text-${text.toLowerCase()}`} className="text-2xl max-sm:text-lg text-white font-bold">
+    <h1
+      id={`button-text-${text.toLowerCase()}`}
+      className="text-2xl max-sm:text-lg text-white font-bold"
+    >
       {text}
     </h1>
-  )
-}
+  );
+};
 
-export default ButtonText
+export default ButtonText;

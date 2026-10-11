@@ -1,6 +1,6 @@
-import { createEnv } from "@t3-oss/env-core";
-import * as z from "zod";
- 
+import { createEnv } from '@t3-oss/env-core';
+import * as z from 'zod';
+
 export const env = createEnv({
   server: {
     TURSO_DATABASE_URL: z.url(),
@@ -9,18 +9,25 @@ export const env = createEnv({
     REDIS_URL: z.string(),
     VITE_ENV: z.enum(['production', 'testing', 'development']),
     NODE_VERSION: z.string(),
-    NITRO_PRESET: z.enum(['render_com', 'digitalocean', 'cloudflare', 'bun', 'netlify', 'vercel', 'node-server'])
+    NITRO_PRESET: z.enum([
+      'render_com',
+      'digitalocean',
+      'cloudflare',
+      'bun',
+      'netlify',
+      'vercel',
+      'node-server',
+    ]),
   },
- 
+
   /**
    * The prefix that client-side variables must have. This is enforced both at
    * a type-level and at runtime.
    */
-  clientPrefix: "PUBLIC_",
- 
-  client: {
-  },
- 
+  clientPrefix: 'PUBLIC_',
+
+  client: {},
+
   /**
    * What object holds the environment variables at runtime. This is usually
    * `process.env` or `import.meta.env`.
@@ -31,10 +38,10 @@ export const env = createEnv({
     PORT: process.env.PORT,
     REDIS_URL: process.env.REDIS_URL,
     VITE_ENV: process.env.VITE_ENV,
-    NODE_VERSION: process.env.NODE_VERSION, 
-    NITRO_PRESET: process.env.NITRO_PRESET
+    NODE_VERSION: process.env.NODE_VERSION,
+    NITRO_PRESET: process.env.NITRO_PRESET,
   },
- 
+
   /**
    * By default, this library will feed the environment variables directly to
    * the Zod validator.

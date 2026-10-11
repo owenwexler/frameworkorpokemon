@@ -2,7 +2,9 @@ import { test } from '@playwright/test';
 import { playRound } from './globalTestFunctions/globalTestFunctions';
 
 test.describe('Core Quiz Functions', () => {
-  test('all core quiz functions work, correct and incorrect guesses show the expected results and adjust the scores and percentage correct accordingly', async ({ page }) => {
+  test('all core quiz functions work, correct and incorrect guesses show the expected results and adjust the scores and percentage correct accordingly', async ({
+    page,
+  }) => {
     // these all need to be in one test because a page refresh would reset the quiz
 
     await page.goto('/');
@@ -14,8 +16,8 @@ test.describe('Core Quiz Functions', () => {
       guess: 'Framework',
       guessStatus: 'correct',
       correctType: 'framework',
-      expectedNewScores: { correct: 1, wrong: 0},
-      expectedNewPercentRight: '100.00%'
+      expectedNewScores: { correct: 1, wrong: 0 },
+      expectedNewPercentRight: '100.00%',
     });
 
     // question: Bulbasaur, it is a pokemon, guess correctly
@@ -26,8 +28,8 @@ test.describe('Core Quiz Functions', () => {
       guess: 'Pokemon',
       guessStatus: 'correct',
       correctType: 'pokemon',
-      expectedNewScores: { correct: 2, wrong: 0},
-      expectedNewPercentRight: '100.00%'
+      expectedNewScores: { correct: 2, wrong: 0 },
+      expectedNewPercentRight: '100.00%',
     });
 
     // question: Backbone, it is a framework, guess incorrectly
@@ -38,8 +40,8 @@ test.describe('Core Quiz Functions', () => {
       guess: 'Pokemon',
       guessStatus: 'wrong',
       correctType: 'framework',
-      expectedNewScores: { correct: 2, wrong: 1},
-      expectedNewPercentRight: '66.67%'
+      expectedNewScores: { correct: 2, wrong: 1 },
+      expectedNewPercentRight: '66.67%',
     });
 
     // question: Charmander, it is a pokemon, guess incorrectly
@@ -51,7 +53,7 @@ test.describe('Core Quiz Functions', () => {
       guessStatus: 'wrong',
       correctType: 'pokemon',
       expectedNewScores: { correct: 2, wrong: 2 },
-      expectedNewPercentRight: '50.00%'
+      expectedNewPercentRight: '50.00%',
     });
 
     // question: Handlebars, it is a framework, guess correctly
@@ -63,7 +65,7 @@ test.describe('Core Quiz Functions', () => {
       guessStatus: 'correct',
       correctType: 'framework',
       expectedNewScores: { correct: 3, wrong: 2 },
-      expectedNewPercentRight: '60.00%'
+      expectedNewPercentRight: '60.00%',
     });
 
     // question: Charmelon, it is a pokemon, guess correctly
@@ -75,7 +77,7 @@ test.describe('Core Quiz Functions', () => {
       guessStatus: 'correct',
       correctType: 'pokemon',
       expectedNewScores: { correct: 4, wrong: 2 },
-      expectedNewPercentRight: '66.67%'
+      expectedNewPercentRight: '66.67%',
     });
 
     // question: Angular, it is a framework, guess correctly
@@ -87,7 +89,7 @@ test.describe('Core Quiz Functions', () => {
       guessStatus: 'correct',
       correctType: 'framework',
       expectedNewScores: { correct: 5, wrong: 2 },
-      expectedNewPercentRight: '71.43%'
+      expectedNewPercentRight: '71.43%',
     });
   });
 });

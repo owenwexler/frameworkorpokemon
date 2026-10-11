@@ -1,17 +1,17 @@
-import { getRandomInt } from '../helper/getRandomInt'
-import { Button } from './style/Button'
-import { useEffect, useState } from 'react'
-import ButtonText from './style/ButtonText'
+import { getRandomInt } from '../helper/getRandomInt';
+import { Button } from './style/Button';
+import { useEffect, useState } from 'react';
+import ButtonText from './style/ButtonText';
 
-import type { FC } from 'react'
-import NameSign from './style/NameSign'
+import type { FC } from 'react';
+import NameSign from './style/NameSign';
 
-import Scoreboard from './Scoreboard'
-import AnswerStatusSign from './style/AnswerStatusSign'
-import NextButton from './style/NextButton'
-import Spinner from './style/Spinner'
-import Error from './Error'
-import type { Item } from '#/typedefs/Item'
+import Scoreboard from './Scoreboard';
+import AnswerStatusSign from './style/AnswerStatusSign';
+import NextButton from './style/NextButton';
+import Spinner from './style/Spinner';
+import Error from './Error';
+import type { Item } from '#/typedefs/Item';
 
 interface QuizProps {
   data: Item[]
@@ -22,87 +22,87 @@ interface QuizProps {
 
 const Quiz: FC<QuizProps> = ({ data, isLoading, isError, env }) => {
   if (isLoading) {
-    return <Spinner />
+    return <Spinner />;
   }
   if (isError) {
-    return <Error />
+    return <Error />;
   }
 
   const getRandomItem = () => {
-    return data[getRandomInt(data.length)]
-  }
+    return data[getRandomInt(data.length)];
+  };
 
   const [currentItem, setCurrentItem] = useState<Item>({
     id: 0,
     name: '',
     type: 'framework',
-  })
+  });
   const [answerState, setAnswerState] = useState<
     'pending' | 'correct' | 'wrong'
-  >('pending')
-  const [numCorrect, setNumCorrect] = useState<number>(0)
-  const [numWrong, setNumWrong] = useState<number>(0)
-  const [numTotal, setNumTotal] = useState<number>(0)
-  const [testingIndex, setTestingIndex] = useState<number>(0)
-  const seen: { [key: string]: boolean } = {}
+  >('pending');
+  const [numCorrect, setNumCorrect] = useState<number>(0);
+  const [numWrong, setNumWrong] = useState<number>(0);
+  const [numTotal, setNumTotal] = useState<number>(0);
+  const [testingIndex, setTestingIndex] = useState<number>(0);
+  const seen: { [key: string]: boolean } = {};
 
   const changeTestingIndex = () => {
     if (testingIndex >= 10) {
-      setTestingIndex(0)
+      setTestingIndex(0);
     } else {
-      setTestingIndex(testingIndex + 1)
+      setTestingIndex(testingIndex + 1);
     }
-  }
+  };
 
   const reset = () => {
-    changeTestingIndex()
-    setAnswerState('pending')
-    let newItem: Item
-    newItem = env === 'testing' ? data[testingIndex + 1] : getRandomItem()
+    changeTestingIndex();
+    setAnswerState('pending');
+    let newItem: Item;
+    newItem = env === 'testing' ? data[testingIndex + 1] : getRandomItem();
     if (env === 'testing') {
-      setCurrentItem(newItem)
+      setCurrentItem(newItem);
     } else {
       if (seen[newItem.name as keyof typeof seen]) {
-        newItem = getRandomItem()
-        seen[newItem.name] = true
-        setCurrentItem(newItem)
+        newItem = getRandomItem();
+        seen[newItem.name] = true;
+        setCurrentItem(newItem);
       } else {
-        seen[newItem.name] = true
-        setCurrentItem(newItem)
+        seen[newItem.name] = true;
+        setCurrentItem(newItem);
       }
     }
-  }
+  };
 
   const correct = () => {
-    setNumTotal(numTotal + 1)
-    setNumCorrect(numCorrect + 1)
-    setAnswerState('correct')
-  }
+    setNumTotal(numTotal + 1);
+    setNumCorrect(numCorrect + 1);
+    setAnswerState('correct');
+  };
 
   const wrong = () => {
-    setNumTotal(numTotal + 1)
-    setNumWrong(numWrong + 1)
-    setAnswerState('wrong')
-  }
+    setNumTotal(numTotal + 1);
+    setNumWrong(numWrong + 1);
+    setAnswerState('wrong');
+  };
 
   const guess = (answer: string) => {
     if (answerState !== 'pending') {
-      return
+      return;
     }
 
-    const item = currentItem
+    const item = currentItem;
     if (answer === item.type) {
-      correct()
+      correct();
     } else {
-      wrong()
+      wrong();
     }
-  }
+  };
 
   useEffect(() => {
-    setTestingIndex(0)
+    setTestingIndex(0);
     // if in the testing environment, set the first question to the first one in the dataset, but set the first question to a random question in any other environment
-    setCurrentItem(env === 'testing' ? data[testingIndex] : getRandomItem())
-  }, [])
+    setCurrentItem(env === 'testing' ? data[testingIndex] : getRandomItem());
+  }, []);
 
   return (
     <>
@@ -138,7 +138,7 @@ const Quiz: FC<QuizProps> = ({ data, isLoading, isError, env }) => {
         </div>
       ) : null}
     </>
-  )
-}
+  );
+};
 
-export default Quiz
+export default Quiz;

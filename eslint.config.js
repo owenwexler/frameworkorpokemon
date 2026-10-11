@@ -6,6 +6,7 @@ export default [
   ...tanstackConfig,
   {
     rules: {
+      semi: ['error', 'always'],
       'import/no-cycle': 'off',
       'import/order': 'off',
       'sort-imports': 'off',

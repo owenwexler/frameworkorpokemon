@@ -7,6 +7,4 @@ const authToken = env.TURSO_AUTH_TOKEN;
 const turso = createClient({ url: dbUrl, authToken: authToken });
 console.log('*** CONNECTED TO TURSO ***');
 
-export {
-  turso
-}
+export { turso };

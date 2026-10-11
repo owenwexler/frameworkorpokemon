@@ -29,15 +29,15 @@ cp .env.example .env
 
 Edit `.env` before starting the app. Every variable below is required by `src/env.ts`, including in testing mode. The example file contains placeholders: replace `development | testing | production` with one value.
 
-| Variable | Purpose / local value |
-| --- | --- |
-| `TURSO_DATABASE_URL` | Your database URL, such as `libsql://your-database.turso.io`. |
-| `TURSO_AUTH_TOKEN` | Authentication token for that database. |
-| `REDIS_URL` | Redis connection URL, such as `redis://localhost:6379`. |
-| `PORT` | Use `3000` locally; the development script also explicitly selects port 3000. |
-| `VITE_ENV` | `development`, `testing`, or `production`; controls quiz data and question selection. |
-| `NODE_VERSION` | Still required by validation; `.env.example` supplies `24.5.1`, although the app runs on Bun. |
-| `NITRO_PRESET` | Use `bun` for a local Bun build or `render_com` for the configured Render target. See `src/env.ts` for accepted values. |
+| Variable             | Purpose / local value                                                                                                   |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `TURSO_DATABASE_URL` | Your database URL, such as `libsql://your-database.turso.io`.                                                           |
+| `TURSO_AUTH_TOKEN`   | Authentication token for that database.                                                                                 |
+| `REDIS_URL`          | Redis connection URL, such as `redis://localhost:6379`.                                                                 |
+| `PORT`               | Use `3000` locally; the development script also explicitly selects port 3000.                                           |
+| `VITE_ENV`           | `development`, `testing`, or `production`; controls quiz data and question selection.                                   |
+| `NODE_VERSION`       | Still required by validation; `.env.example` supplies `24.5.1`, although the app runs on Bun.                           |
+| `NITRO_PRESET`       | Use `bun` for a local Bun build or `render_com` for the configured Render target. See `src/env.ts` for accepted values. |
 
 Keep credentials in `.env` or your host's environment configuration. `.env` is ignored by Git. `VITE_ENV` is an application setting, separate from Vite's build mode; never put secrets in `VITE_` variables.
 
@@ -65,21 +65,21 @@ Open `http://localhost:3000`.
 
 ## Commands
 
-| Command | Purpose |
-| --- | --- |
-| `bun run dev` | Start the development server on port 3000. |
-| `bun run generate-routes` | Regenerate the TanStack route tree. |
-| `bun run build` | Build the application with Vite/Nitro. |
-| `bun run start` | Run `.output/server/index.mjs` using Bun after building. |
-| `bun run preview` | Run Vite's preview command. |
-| `bun run lint` | Run ESLint. |
-| `bun run check` | Check Prettier formatting; this is not a type check. |
-| `bun run format` | Format the entire repository and apply ESLint fixes. |
-| `bunx tsc --noEmit` | Check TypeScript using the installed compiler; no dedicated package script. |
-| `bun run test:e2e:run` | Run Playwright tests. |
-| `bun run test:e2e:ui` | Open Playwright's test UI. |
-| `bun run test:report` | Open the Playwright HTML report. |
-| `bun run test:codegen` | Record browser interactions against localhost:3000. |
+| Command                   | Purpose                                                                     |
+| ------------------------- | --------------------------------------------------------------------------- |
+| `bun run dev`             | Start the development server on port 3000.                                  |
+| `bun run generate-routes` | Regenerate the TanStack route tree.                                         |
+| `bun run build`           | Build the application with Vite/Nitro.                                      |
+| `bun run start`           | Run `.output/server/index.mjs` using Bun after building.                    |
+| `bun run preview`         | Run Vite's preview command.                                                 |
+| `bun run lint`            | Run ESLint.                                                                 |
+| `bun run check`           | Check Prettier formatting; this is not a type check.                        |
+| `bun run format`          | Format the entire repository and apply ESLint fixes.                        |
+| `bunx tsc --noEmit`       | Check TypeScript using the installed compiler; no dedicated package script. |
+| `bun run test:e2e:run`    | Run Playwright tests.                                                       |
+| `bun run test:e2e:ui`     | Open Playwright's test UI.                                                  |
+| `bun run test:report`     | Open the Playwright HTML report.                                            |
+| `bun run test:codegen`    | Record browser interactions against localhost:3000.                         |
 
 ## Browser tests
 

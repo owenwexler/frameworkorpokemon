@@ -3,8 +3,6 @@ const capitalize = (word: string) => {
   const restOfWord = word.slice(1);
 
   return `${firstCharacter.toUpperCase()}${restOfWord}`;
-}
+};
 
-export {
-  capitalize
-}
+export { capitalize };
