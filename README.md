@@ -1,247 +1,145 @@
-# What is Framework Or Pokemon?
-Is that name you're looking at the name of a computer programming framework or a Pokemon?  That question is a meme and I made a quiz app out of it.
+# Framework Or Pokemon
 
-## Current Tech Stack
-* Language: [TypeScript](https://typescriptlang.org)
-* Runtime: [Bun](https://bun.sh)
-* Framework: [Tanstack Start](https://tanstack.com/start/latest) 
-* CSS Library: [Tailwind](https://tailwindcss.com/)
-* UI Library: none, all buttons and inputs are custom 
-* Database: [Turso](https://turso.tech)
-* ORM: none
-* Cache: [REDIS](https://redis.io/) for caching quiz data
-* Error-handling library: none
-* Logging: none
-* Environment Variable Validation: [T3-Env](http://env.t3.gg/)
-* Linting: [ESLint](http://eslint.org)
-* Client state management: [Jotai](https://jotai.org/)
-* CI: none
-* Deployment target: [Render.com](https://render.com)
+Is that name a programming framework or a Pokemon? Pick an answer, find out whether you were right, and try the next name.
 
-## Setup 
-1.  Make sure you have [Bun](https://bun.sh/) and [REDIS](https://redis.io/lp/get-started2) installed locally.  In some Linux distributions, REDIS is replaced by Valkey under the hood - this shouldn't cause any problems in development.  Please submit an issue if it does.
-2.  Make sure you have a Turso account and API key.  Create a database for Framework or Pokemon.  
-3.  Create a ```.env``` file and set up all environment variables according to the ```.env.example``` file.  Fill in your Turso API key.  Leave the REDIS_URL variable blank ('') for local REDIS in development.  SRW_ENV is necessary to determine whether the environment is development or production in client components.  Set DEV_MODE to "offline" before running the tests.   
-4.  Install all dependencies by typing ```npm install```.  
-5.  Run the development server in offline mode by typing ```npm run dev:offline```.
-6.  Run the tests in UI mode by typing ```npm run test:e2e:ui``` or in CLI mode by typing ```npm run test:e2e:run```.  Make sure they all pass.
+The quiz tracks correct answers, wrong answers, and your percentage correct. Each question accepts one answer before showing **NEXT >>>**. Scores live in React component state and reset on refresh; there are no accounts or saved scores. Development and production select random questions, which can repeat. Testing mode uses a fixed fixture order.
 
-## Tests
-Framework Or Pokemon uses [Playwright](https://playwright.dev/) as its testing framework.  Before running the tests, the app must be set to "testing" mode (found in environment variables) which puts the quiz questions in a static order for predictable testing responses.
+Created by Owen Wexler.
 
-## Bun
-As of July 2026, Bun replaces Node as the runtime.
+## Stack
 
-## Tanstack Start
-As of June 2026, uses Tanstack Start as its framework.  From July 2024-June 2026, Framework Or Pokemon used Astro and Preact, but has now migrated fully to Tanstack Start.  All evergreen Tanstack Start details are included below.
+- Bun runtime and package manager, including its built-in Redis client.
+- TypeScript, React 19, TanStack Start, and TanStack Router with file-based routes.
+- Vite and Nitro for development and server builds.
+- Tailwind CSS 4 and custom UI components.
+- Turso/libSQL for questions, with Redis caching and no ORM.
+- T3 Env and Zod for environment validation.
+- TanStack Query with router SSR integration; the quiz currently uses route-loader data and React state.
+- Playwright for browser tests; ESLint and Prettier for code checks.
+- Docker deployment configured for Render.
 
-Welcome to your new TanStack Start app! 
+## Local setup
 
-# Getting Started
+Use Bun; Node alone cannot run the current database layer because it uses `Bun.RedisClient`. The Dockerfile pins Bun `1.3.14`. For normal development, you also need a Turso database and a reachable Redis instance.
 
-To run this application:
+```sh
+bun install --frozen-lockfile
+cp .env.example .env
+```
 
-```bash
-bun install
+Edit `.env` before starting the app. Every variable below is required by `src/env.ts`, including in testing mode. The example file contains placeholders: replace `development | testing | production` with one value.
+
+| Variable | Purpose / local value |
+| --- | --- |
+| `TURSO_DATABASE_URL` | Your database URL, such as `libsql://your-database.turso.io`. |
+| `TURSO_AUTH_TOKEN` | Authentication token for that database. |
+| `REDIS_URL` | Redis connection URL, such as `redis://localhost:6379`. |
+| `PORT` | Use `3000` locally; the development script also explicitly selects port 3000. |
+| `VITE_ENV` | `development`, `testing`, or `production`; controls quiz data and question selection. |
+| `NODE_VERSION` | Still required by validation; `.env.example` supplies `24.5.1`, although the app runs on Bun. |
+| `NITRO_PRESET` | Use `bun` for a local Bun build or `render_com` for the configured Render target. See `src/env.ts` for accepted values. |
+
+Keep credentials in `.env` or your host's environment configuration. `.env` is ignored by Git. `VITE_ENV` is an application setting, separate from Vite's build mode; never put secrets in `VITE_` variables.
+
+### Prepare the question database
+
+Run this table definition against your selected Turso database, then execute `src/db/sql/inserts.sql` once to seed it:
+
+```sql
+CREATE TABLE IF NOT EXISTS items (
+  item_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+  item_name TEXT,
+  item_type TEXT
+);
+```
+
+The checked-in `src/db/sql/schema.sql` also contains `CREATE DATABASE` and `USE` statements, which are not SQLite/libSQL syntax. Use only its `CREATE TABLE` statement as shown above. There is no migration or seed package script. Re-running the inserts adds duplicate rows.
+
+Start Redis, then start the app:
+
+```sh
 bun run dev
 ```
 
-# Building For Production
+Open `http://localhost:3000`.
 
-To build this application for production:
+## Commands
 
-```bash
+| Command | Purpose |
+| --- | --- |
+| `bun run dev` | Start the development server on port 3000. |
+| `bun run generate-routes` | Regenerate the TanStack route tree. |
+| `bun run build` | Build the application with Vite/Nitro. |
+| `bun run start` | Run `.output/server/index.mjs` using Bun after building. |
+| `bun run preview` | Run Vite's preview command. |
+| `bun run lint` | Run ESLint. |
+| `bun run check` | Check Prettier formatting; this is not a type check. |
+| `bun run format` | Format the entire repository and apply ESLint fixes. |
+| `bunx tsc --noEmit` | Check TypeScript using the installed compiler; no dedicated package script. |
+| `bun run test:e2e:run` | Run Playwright tests. |
+| `bun run test:e2e:ui` | Open Playwright's test UI. |
+| `bun run test:report` | Open the Playwright HTML report. |
+| `bun run test:codegen` | Record browser interactions against localhost:3000. |
+
+## Browser tests
+
+Install Playwright's browsers after installing dependencies:
+
+```sh
+bunx playwright install
+```
+
+Start a development server in testing mode:
+
+```sh
+VITE_ENV=testing bun run dev
+```
+
+In another terminal:
+
+```sh
+bun run test:e2e:run
+```
+
+Playwright targets `http://localhost:3000` and runs Chromium, Firefox, and WebKit. Its automatic `webServer` setup is commented out, so start the server yourself. Restart any existing development server in testing mode before running the tests.
+
+Testing mode returns `src/data/testData.json` instead of querying the question database. It still imports the database models first, initializing the Turso and Bun Redis clients, so it still requires Bun and valid environment configuration. It is not a fully isolated offline mode, and there is no `dev:offline` script.
+
+The tests cover static page elements and seven consecutive quiz rounds, including correct/incorrect feedback, scores, and percentages. They depend on fixture order, element IDs, button text, and specific colors. The ten-item fixture's end-of-list behavior is not covered; the current next-question indexing can exceed its bounds.
+
+## Code layout and data flow
+
+```text
+src/
+  routes/                  Root document and home route
+  router.tsx               Router creation and Query SSR integration
+  routeTree.gen.ts         Generated route tree; do not edit manually
+  components/              Quiz state, scoreboard, and feedback
+    style/                 Custom buttons, signs, scorecards, and spinner
+  serverFunctions/         Server functions for questions and app mode
+  db/                      Turso client, models, Redis client, and SQL
+  data/testData.json       Deterministic browser-test questions
+  data/data.ts             Static source lists; not used by the live loader
+  integrations/            TanStack Query context and devtools
+  typedefs/                Question and database-row types
+  helper/                  Formatting and quiz helpers
+  env.ts                   Environment validation
+  styles.css               Tailwind entry point
+tests/                     Playwright specs and shared helpers
+public/                    Logo, icons, and other static assets
+```
+
+The home route loader calls `getData()` and `getViteEnv()`, then passes their results to `Quiz`. The data server function dynamically imports the database models to keep Bun-specific code out of the client bundle.
+
+Outside testing mode, `getAllItems()` checks Redis key `fop::data`, then queries `SELECT * FROM items` on a cache miss. Database rows are mapped to `{ id, name, type }` and cached for 216,000 seconds (60 hours). Redis errors are rethrown; there is no database fallback on a Redis failure. After changing database questions, invalidate that cache key in the relevant environment or wait for expiry. Editing `src/data/data.ts` does not update the live database.
+
+## Production
+
+```sh
 bun run build
+bun run start
 ```
 
-## Styling
+Supply the required environment variables and use `VITE_ENV=production`. The start script uses `.output/server/index.mjs`; do not substitute the old `dist/server` path or a Node-only runtime.
 
-This project uses [Tailwind CSS](https://tailwindcss.com/) for styling.
-
-### Removing Tailwind CSS
-# DO NOT REMOVE TAILWIND CSS FROM THIS PROJECT
-If you prefer not to use Tailwind CSS:
-
-1. Remove the demo pages in `src/routes/demo/`
-2. Replace the Tailwind import in `src/styles.css` with your own styles
-3. Remove `tailwindcss()` from the plugins array in `vite.config.ts`
-4. Uninstall the packages: `npm install @tailwindcss/vite tailwindcss -D`
-
-## Linting & Formatting
-
-
-This project uses [eslint](https://eslint.org/) and [prettier](https://prettier.io/) for linting and formatting. Eslint is configured using [tanstack/eslint-config](https://tanstack.com/config/latest/docs/eslint). The following scripts are available:
-
-```bash
-npm run lint
-npm run format
-npm run check
-```
-
-
-## Deploy with Nitro
-
-This project uses Nitro as a generic server adapter, so it can run on any Node-compatible host.
-
-```bash
-npm run build
-node dist/server/index.mjs
-```
-
-The build output is a self-contained Node server. To deploy, push the `dist/` directory to your host (Render, Fly.io, your own VPS, etc.) and run the server command above.
-
-For host-specific presets (Vercel, Netlify, Cloudflare, AWS Lambda, etc.) and tuning, see https://v3.nitro.build/deploy.
-
-
-
-## Routing
-
-This project uses [TanStack Router](https://tanstack.com/router) with file-based routing. Routes are managed as files in `src/routes`.
-
-### Adding A Route
-
-To add a new route to your application just add a new file in the `./src/routes` directory.
-
-TanStack will automatically generate the content of the route file for you.
-
-Now that you have two routes you can use a `Link` component to navigate between them.
-
-### Adding Links
-
-To use SPA (Single Page Application) navigation you will need to import the `Link` component from `@tanstack/react-router`.
-
-```tsx
-import { Link } from "@tanstack/react-router";
-```
-
-Then anywhere in your JSX you can use it like so:
-
-```tsx
-<Link to="/about">About</Link>
-```
-
-This will create a link that will navigate to the `/about` route.
-
-More information on the `Link` component can be found in the [Link documentation](https://tanstack.com/router/v1/docs/framework/react/api/router/linkComponent).
-
-### Using A Layout
-
-In the File Based Routing setup the layout is located in `src/routes/__root.tsx`. Anything you add to the root route will appear in all the routes. The route content will appear in the JSX where you render `{children}` in the `shellComponent`.
-
-Here is an example layout that includes a header:
-
-```tsx
-import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
-
-export const Route = createRootRoute({
-  head: () => ({
-    meta: [
-      { charSet: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { title: 'My App' },
-    ],
-  }),
-  shellComponent: ({ children }) => (
-    <html lang="en">
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        <header>
-          <nav>
-            <Link to="/">Home</Link>
-            <Link to="/about">About</Link>
-          </nav>
-        </header>
-        {children}
-        <Scripts />
-      </body>
-    </html>
-  ),
-})
-```
-
-More information on layouts can be found in the [Layouts documentation](https://tanstack.com/router/latest/docs/framework/react/guide/routing-concepts#layouts).
-
-## Server Functions
-
-TanStack Start provides server functions that allow you to write server-side code that seamlessly integrates with your client components.
-
-```tsx
-import { createServerFn } from '@tanstack/react-start'
-
-const getServerTime = createServerFn({
-  method: 'GET',
-}).handler(async () => {
-  return new Date().toISOString()
-})
-
-// Use in a component
-function MyComponent() {
-  const [time, setTime] = useState('')
-  
-  useEffect(() => {
-    getServerTime().then(setTime)
-  }, [])
-  
-  return <div>Server time: {time}</div>
-}
-```
-
-## API Routes
-
-You can create API routes by using the `server` property in your route definitions:
-
-```tsx
-import { createFileRoute } from '@tanstack/react-router'
-import { json } from '@tanstack/react-start'
-
-export const Route = createFileRoute('/api/hello')({
-  server: {
-    handlers: {
-      GET: () => json({ message: 'Hello, World!' }),
-    },
-  },
-})
-```
-
-## Data Fetching
-
-There are multiple ways to fetch data in your application. You can use TanStack Query to fetch data from a server. But you can also use the `loader` functionality built into TanStack Router to load the data for a route before it's rendered.
-
-For example:
-
-```tsx
-import { createFileRoute } from '@tanstack/react-router'
-
-export const Route = createFileRoute('/people')({
-  loader: async () => {
-    const response = await fetch('https://swapi.dev/api/people')
-    return response.json()
-  },
-  component: PeopleComponent,
-})
-
-function PeopleComponent() {
-  const data = Route.useLoaderData()
-  return (
-    <ul>
-      {data.results.map((person) => (
-        <li key={person.name}>{person.name}</li>
-      ))}
-    </ul>
-  )
-}
-```
-
-Loaders simplify your data fetching logic dramatically. Check out more information in the [Loader documentation](https://tanstack.com/router/latest/docs/framework/react/guide/data-loading#loader-parameters).
-
-# Demo files
-
-Files prefixed with `demo` can be safely deleted. They are there to provide a starting point for you to play around with the features you've installed.
-
-# Learn More
-
-You can learn more about all of the offerings from TanStack in the [TanStack documentation](https://tanstack.com).
-
-For TanStack Start specific documentation, visit [TanStack Start](https://tanstack.com/start).
+`Dockerfile` installs from `bun.lock`, builds the app, exposes port 3000, and runs `bun run start`. `render.yml` declares a Docker web service deploying the `production` branch. Configure credentials, Redis access, and the remaining environment variables on the host; the Render file does not provision databases or declare those values. There is currently no `.dockerignore`, so exclude local `.env` files and other private files from the Docker build context before building an image.
