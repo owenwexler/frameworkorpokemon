@@ -1,95 +1,105 @@
+import { getRandomInt } from '../helper/getRandomInt'
+import { Button } from './style/Button'
+import { useEffect, useState } from 'react'
+import ButtonText from './style/ButtonText'
 
-import { getRandomInt } from "../helper/getRandomInt";
-import { Button } from "./style/Button";
-import { getIsAText } from "../helper/getIsAText";
-import { useEffect, useState } from 'react';
-import ButtonText from "./style/ButtonText";
+import type { FC } from 'react'
+import NameSign from './style/NameSign'
 
-import type { FC } from 'react';
-import NameSign from "./style/NameSign";
-
-import Scoreboard from "./Scoreboard";
-import AnswerStatusSign from "./style/AnswerStatusSign";
-import NextButton from "./style/NextButton";
-import Spinner from "./style/Spinner";
-import Error from "./Error";
-import type { Item } from "#/typedefs/Item";
+import Scoreboard from './Scoreboard'
+import AnswerStatusSign from './style/AnswerStatusSign'
+import NextButton from './style/NextButton'
+import Spinner from './style/Spinner'
+import Error from './Error'
+import type { Item } from '#/typedefs/Item'
 
 interface QuizProps {
-  data: Item[];
-  isLoading: boolean;
-  isError: boolean;
-  env: 'development' | 'production' | 'testing';
+  data: Item[]
+  isLoading: boolean
+  isError: boolean
+  env: 'development' | 'production' | 'testing'
 }
 
 const Quiz: FC<QuizProps> = ({ data, isLoading, isError, env }) => {
-  if (isLoading) { return <Spinner /> }
-  if (isError) { return <Error /> }
+  if (isLoading) {
+    return <Spinner />
+  }
+  if (isError) {
+    return <Error />
+  }
 
   const getRandomItem = () => {
     return data[getRandomInt(data.length)]
   }
 
-  const [currentItem, setCurrentItem] = useState<Item>({ id: 0, name: '', type: 'framework' });
-  const [answerState, setAnswerState] = useState<'pending' | 'correct' | 'wrong'>('pending');
-  const [numCorrect, setNumCorrect] = useState<number>(0);
-  const [numWrong, setNumWrong] = useState<number>(0);
-  const [numTotal, setNumTotal] = useState<number>(0);
-  const [testingIndex, setTestingIndex] = useState<number>(0);
-  const seen: { [key: string]: boolean } = {};
+  const [currentItem, setCurrentItem] = useState<Item>({
+    id: 0,
+    name: '',
+    type: 'framework',
+  })
+  const [answerState, setAnswerState] = useState<
+    'pending' | 'correct' | 'wrong'
+  >('pending')
+  const [numCorrect, setNumCorrect] = useState<number>(0)
+  const [numWrong, setNumWrong] = useState<number>(0)
+  const [numTotal, setNumTotal] = useState<number>(0)
+  const [testingIndex, setTestingIndex] = useState<number>(0)
+  const seen: { [key: string]: boolean } = {}
 
   const changeTestingIndex = () => {
     if (testingIndex >= 10) {
-      setTestingIndex(0);
+      setTestingIndex(0)
     } else {
-      setTestingIndex(testingIndex + 1);
+      setTestingIndex(testingIndex + 1)
     }
   }
 
   const reset = () => {
-    changeTestingIndex();
-    setAnswerState('pending');
-    let newItem: Item;
-    newItem = env === 'testing' ? data[testingIndex + 1] : getRandomItem();
+    changeTestingIndex()
+    setAnswerState('pending')
+    let newItem: Item
+    newItem = env === 'testing' ? data[testingIndex + 1] : getRandomItem()
     if (env === 'testing') {
-      setCurrentItem(newItem);
+      setCurrentItem(newItem)
     } else {
       if (seen[newItem.name as keyof typeof seen]) {
-        newItem = getRandomItem();
-        seen[newItem.name] = true;
-        setCurrentItem(newItem);
+        newItem = getRandomItem()
+        seen[newItem.name] = true
+        setCurrentItem(newItem)
       } else {
-        seen[newItem.name] = true;
-        setCurrentItem(newItem);
+        seen[newItem.name] = true
+        setCurrentItem(newItem)
       }
     }
   }
 
   const correct = () => {
-    setNumTotal(numTotal + 1);
-    setNumCorrect(numCorrect + 1);
-    setAnswerState('correct');
+    setNumTotal(numTotal + 1)
+    setNumCorrect(numCorrect + 1)
+    setAnswerState('correct')
   }
 
   const wrong = () => {
-    setNumTotal(numTotal + 1);
-    setNumWrong(numWrong + 1);
-    setAnswerState('wrong');
+    setNumTotal(numTotal + 1)
+    setNumWrong(numWrong + 1)
+    setAnswerState('wrong')
   }
 
   const guess = (answer: string) => {
-    if (answerState !== 'pending') { return; }
+    if (answerState !== 'pending') {
+      return
+    }
 
-    const item = currentItem;
+    const item = currentItem
     if (answer === item.type) {
-      correct();
+      correct()
     } else {
-      wrong();
+      wrong()
     }
   }
 
   useEffect(() => {
-    setTestingIndex(0);
+    setTestingIndex(0)
     // if in the testing environment, set the first question to the first one in the dataset, but set the first question to a random question in any other environment
     setCurrentItem(env === 'testing' ? data[testingIndex] : getRandomItem())
   }, [])
@@ -99,17 +109,11 @@ const Quiz: FC<QuizProps> = ({ data, isLoading, isError, env }) => {
       <NameSign name={currentItem.name} />
 
       <div className="flex flex-row max-sm:flex-col items-center text-center justify-around max-sm:justify-center px-5 pt-5 pb-5 max-sm:pt-4 max-sm:pb-2 space-x-6 max-sm:space-x-0 max-sm:space-y-4">
-        <Button
-          id="btn-framework"
-          onClick={() => guess('framework')}
-        >
+        <Button id="btn-framework" onClick={() => guess('framework')}>
           <ButtonText text="Framework" />
         </Button>
 
-        <Button
-          id="btn-pokemon"
-          onClick={() => guess('pokemon')}
-        >
+        <Button id="btn-pokemon" onClick={() => guess('pokemon')}>
           <ButtonText text="Pokemon" />
         </Button>
       </div>
@@ -122,39 +126,19 @@ const Quiz: FC<QuizProps> = ({ data, isLoading, isError, env }) => {
 
       <p className="mt-4 max-sm:mt-2"></p>
 
-      {
-        answerState === 'correct'
-        ?
-        <AnswerStatusSign
-          currentItem={currentItem}
-          status="correct"
-        />
-        :
-        null
-      }
-      {
-        answerState === 'wrong'
-        ?
-        <AnswerStatusSign
-          currentItem={currentItem}
-          status="wrong"
-        />
-        :
-        null
-      }
-      {
-        answerState !== 'pending'
-        ?
+      {answerState === 'correct' ? (
+        <AnswerStatusSign currentItem={currentItem} status="correct" />
+      ) : null}
+      {answerState === 'wrong' ? (
+        <AnswerStatusSign currentItem={currentItem} status="wrong" />
+      ) : null}
+      {answerState !== 'pending' ? (
         <div className="flex flex-row items-center justify-center">
-          <NextButton
-            onClick={() => reset()}
-          />
+          <NextButton onClick={() => reset()} />
         </div>
-        :
-        null
-      }
+      ) : null}
     </>
   )
 }
 
-export default Quiz;
+export default Quiz
