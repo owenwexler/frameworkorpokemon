@@ -1,10 +1,10 @@
 import { createClient } from '@libsql/client';
 import { env } from '#/env';
 
-const dbUrl = env.TURSO_DATABASE_URL;
-const authToken = env.TURSO_AUTH_TOKEN;
+const database = createClient(
+  env.VITE_ENV === 'production'
+    ? { url: env.TURSO_DATABASE_URL!, authToken: env.TURSO_AUTH_TOKEN }
+    : { url: env.SQLITE_DATABASE_URL },
+);
 
-const turso = createClient({ url: dbUrl, authToken: authToken });
-console.log('*** CONNECTED TO TURSO ***');
-
-export { turso };
+export { database };

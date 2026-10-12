@@ -1,0 +1,14 @@
+.git
+node_modules
+.env
+.env.*
+!.env.example
+*.db
+*.db-*
+*.sqlite
+*.sqlite-*
+.output
+.nitro
+.tanstack
+test-results
+playwright-report

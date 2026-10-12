@@ -1,12 +1,28 @@
 import { createEnv } from '@t3-oss/env-core';
 import * as z from 'zod';
 
+const production = process.env.VITE_ENV === 'production';
+const productionString = production ? z.string().min(1) : z.string().optional();
+
 export const env = createEnv({
   server: {
-    TURSO_DATABASE_URL: z.url(),
-    TURSO_AUTH_TOKEN: z.string(),
+    TURSO_DATABASE_URL: production
+      ? z
+          .url()
+          .refine(
+            (url) => ['libsql:', 'https:'].includes(new URL(url).protocol),
+            'Production requires a remote Turso URL',
+          )
+      : z.string().optional(),
+    TURSO_AUTH_TOKEN: productionString,
     PORT: z.string(), // do we still need an environment variable for PORT?
-    REDIS_URL: z.string(),
+    REDIS_URL: production
+      ? z.string().min(1)
+      : z.string().default('redis://localhost:6379'),
+    SQLITE_DATABASE_URL: z
+      .string()
+      .startsWith('file:')
+      .default('file:local.db'),
     VITE_ENV: z.enum(['production', 'testing', 'development']),
     NODE_VERSION: z.string(),
     NITRO_PRESET: z.enum([
@@ -33,6 +49,7 @@ export const env = createEnv({
    * `process.env` or `import.meta.env`.
    */
   runtimeEnvStrict: {
+    SQLITE_DATABASE_URL: process.env.SQLITE_DATABASE_URL,
     TURSO_DATABASE_URL: process.env.TURSO_DATABASE_URL,
     TURSO_AUTH_TOKEN: process.env.TURSO_AUTH_TOKEN,
     PORT: process.env.PORT,

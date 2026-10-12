@@ -55,15 +55,15 @@ This file applies throughout this repository. The TanStack Start conventions bel
 - Routes: `bun run generate-routes`.
 - Build and serve: `bun run build`, then `bun run start` (Bun executes `.output/server/index.mjs`).
 - Lint: `bun run lint`. Formatting check: `bun run check`. Type check: `bunx tsc --noEmit`.
-- `bun run format` rewrites the whole repository and runs ESLint fixes; avoid it for narrowly scoped changes. Prettier specifies no semicolons, single quotes, and trailing commas.
+- `bun run format` rewrites the whole repository and runs ESLint fixes; avoid it for narrowly scoped changes. Prettier specifies semicolons, single quotes, and trailing commas.
 - Browser tests: `bun run test:e2e:run`; interactive mode: `bun run test:e2e:ui`; report: `bun run test:report`.
-- There is no configured unit-test script, `dev:offline` script, migration script, or CI workflow.
+- `bun run test:db` runs database configuration/setup tests. `bun run db:setup` initializes development SQLite. There is no `dev:offline` script, migration script, or CI workflow.
 - Both `#/*` and `@/*` resolve to `src/*` in TypeScript. Prefer the commonly used `#/` alias for new cross-directory imports.
 
 ### Architecture and behavior
 
 - `src/routes/index.tsx` loads questions and app mode through `src/serverFunctions/serverFunctions.ts`.
-- Keep the dynamic import of `../db/models` inside the server handler: it prevents Bun Redis code from entering the browser bundle.
+- Keep the dynamic import of `../db/models` inside the server handler: it prevents Redis code from entering the browser bundle.
 - `src/components/Quiz.tsx` owns question selection, answer state, and scores using React state. There is no Jotai store or score persistence.
 - Preserve one scored answer per question, correct/wrong feedback, and next-question navigation. Percentage correct is displayed after the first answer with two decimal places.
 - `src/components/style/` contains the custom UI primitives. Keep Tailwind CSS and the existing component approach unless the task explicitly changes them.
@@ -72,10 +72,10 @@ This file applies throughout this repository. The TanStack Start conventions bel
 ### Data and configuration
 
 - `src/env.ts` validates all required variables listed in `.env.example`, even in testing mode. `VITE_ENV` accepts exactly `development`, `testing`, or `production`.
-- Normal question data comes from Turso/libSQL via `src/db/models.ts`. Redis is implemented with `Bun.RedisClient` and requires the Bun runtime.
-- Redis key `fop::data` caches mapped questions for 60 hours. Redis failures propagate rather than falling back to Turso. Consider cache invalidation when changing question data or its shape.
+- Development question data comes from local SQLite (`SQLITE_DATABASE_URL`, default `file:local.db`); production uses Turso/libSQL via `src/db/models.ts`. Turso credentials are required only in production. Redis defaults to `redis://localhost:6379` in development and must be explicitly configured in production. Redis is implemented with ioredis; deployment still uses Bun.
+- Redis key `fop::data` caches mapped questions for 60 hours. Redis read failures or invalid cached data fall back to the database; cache-write failures do not fail requests. Consider cache invalidation when changing question data or its shape.
 - Stored rows use `item_id`, `item_name`, and `item_type`; UI items use `id`, `name`, and `type`. Quiz categories are `framework` and `pokemon`, although the current type declarations use `string`.
-- SQL seed data lives in `src/db/sql/inserts.sql`. The `CREATE DATABASE` and `USE` lines in `schema.sql` are incompatible with SQLite/libSQL; use its table definition only. Seeds are not idempotent.
+- SQL seed data lives in `src/db/sql/inserts.sql`. `schema.sql` is SQLite/libSQL compatible. Raw seeds are not idempotent; `db:setup` seeds only an empty local table and refuses non-development modes.
 - `src/data/data.ts` is not wired into the live loader and contains a stale helper import. Do not assume changing those lists seeds or updates the database.
 - Never run seeds or invalidate shared caches merely to validate a code change.
 
@@ -83,7 +83,7 @@ This file applies throughout this repository. The TanStack Start conventions bel
 
 - Start the app separately with `VITE_ENV=testing bun run dev`; Playwright's `webServer` configuration is disabled. Its base URL is `http://localhost:3000`.
 - Install browsers with `bunx playwright install` when needed. Projects cover Chromium, Firefox, and WebKit.
-- Testing uses `src/data/testData.json` in a fixed order. Models are imported before fixture selection, so clients still initialize; do not describe testing as infrastructure-free.
+- Testing uses `src/data/testData.json` in a fixed order. Fixtures return before models are imported, so testing mode does not initialize database or Redis clients.
 - The core spec plays seven rounds in one page session because refreshing resets scores. Preserve fixture order unless updating the tests deliberately.
 - Shared helpers in `tests/globalTestFunctions/globalTestFunctions.ts` assert IDs, visible text, colors, scores, and percentages. Update those assertions alongside intentional UI changes.
 - Current random selection does not reliably prevent repeats, and testing-mode next-question indexing can run beyond the ten-item fixture. Do not promise exhaustive unique rounds or safe fixture wraparound; address these separately when in scope.
@@ -93,4 +93,4 @@ This file applies throughout this repository. The TanStack Start conventions bel
 
 - `render.yml` targets Docker on the `production` branch. `Dockerfile` builds and starts the app with Bun.
 - Preserve the `.output/server/index.mjs` start path and the Bun runtime requirement.
-- Environment values and backing services must be supplied separately from `render.yml`. There is no `.dockerignore`; ensure private local files are excluded from image build contexts.
+- Environment values and backing services must be supplied separately from `render.yml`. `.dockerignore` excludes local environment files, SQLite databases, and build artifacts.

@@ -1,9 +1,3 @@
--- SQLite
-
-CREATE DATABASE IF NOT EXISTS fop_dev;
-
-USE fop_dev;
-
 CREATE TABLE IF NOT EXISTS items (
   item_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
   item_name TEXT,

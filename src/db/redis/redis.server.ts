@@ -1,16 +1,18 @@
+import Redis from 'ioredis';
 import { env } from '#/env';
 
-function getRedisClient() {
-  // Access the global Bun runtime safely
-  if (typeof Bun !== 'undefined') {
-    return new Bun.RedisClient(env.REDIS_URL);
-  }
+const redis = new Redis(env.REDIS_URL, {
+  lazyConnect: true,
+  connectTimeout: 1000,
+  commandTimeout: 1000,
+  maxRetriesPerRequest: 1,
+  retryStrategy: (attempt) => Math.min(attempt * 200, 5000),
+});
 
-  throw new Error(
-    'Redis client can only be initialized on a Bun server environment.',
-  );
-}
-
-const redis = getRedisClient();
+// ioredis emits connection errors separately from rejected commands. Avoid
+// logging connection details (which may contain credentials).
+redis.on('error', () => {
+  console.warn('Redis connection unavailable; requests will use the database.');
+});
 
 export default redis;

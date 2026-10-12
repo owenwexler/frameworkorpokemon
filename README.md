@@ -8,11 +8,11 @@ Created by Owen Wexler.
 
 ## Stack
 
-- Bun runtime and package manager, including its built-in Redis client.
+- Bun runtime and package manager, with ioredis for Redis access.
 - TypeScript, React 19, TanStack Start, and TanStack Router with file-based routes.
 - Vite and Nitro for development and server builds.
 - Tailwind CSS 4 and custom UI components.
-- Turso/libSQL for questions, with Redis caching and no ORM.
+- Turso/libSQL in production and local SQLite in development, with Redis caching and no ORM.
 - T3 Env and Zod for environment validation.
 - TanStack Query with router SSR integration; the quiz currently uses route-loader data and React state.
 - Playwright for browser tests; ESLint and Prettier for code checks.
@@ -20,53 +20,45 @@ Created by Owen Wexler.
 
 ## Local setup
 
-Use Bun; Node alone cannot run the current database layer because it uses `Bun.RedisClient`. The Dockerfile pins Bun `1.3.14`. For normal development, you also need a Turso database and a reachable Redis instance.
+Use Bun for the configured scripts and server runtime. The Dockerfile pins Bun `1.3.14`. For development, run a local Redis instance; question data lives in a local SQLite file.
 
 ```sh
 bun install --frozen-lockfile
 cp .env.example .env
 ```
 
-Edit `.env` before starting the app. Every variable below is required by `src/env.ts`, including in testing mode. The example file contains placeholders: replace `development | testing | production` with one value.
-
-| Variable             | Purpose / local value                                                                                                   |
-| -------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `TURSO_DATABASE_URL` | Your database URL, such as `libsql://your-database.turso.io`.                                                           |
-| `TURSO_AUTH_TOKEN`   | Authentication token for that database.                                                                                 |
-| `REDIS_URL`          | Redis connection URL, such as `redis://localhost:6379`.                                                                 |
-| `PORT`               | Use `3000` locally; the development script also explicitly selects port 3000.                                           |
-| `VITE_ENV`           | `development`, `testing`, or `production`; controls quiz data and question selection.                                   |
-| `NODE_VERSION`       | Still required by validation; `.env.example` supplies `24.5.1`, although the app runs on Bun.                           |
-| `NITRO_PRESET`       | Use `bun` for a local Bun build or `render_com` for the configured Render target. See `src/env.ts` for accepted values. |
-
-Keep credentials in `.env` or your host's environment configuration. `.env` is ignored by Git. `VITE_ENV` is an application setting, separate from Vite's build mode; never put secrets in `VITE_` variables.
-
-### Prepare the question database
-
-Run this table definition against your selected Turso database, then execute `src/db/sql/inserts.sql` once to seed it:
-
-```sql
-CREATE TABLE IF NOT EXISTS items (
-  item_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-  item_name TEXT,
-  item_type TEXT
-);
-```
-
-The checked-in `src/db/sql/schema.sql` also contains `CREATE DATABASE` and `USE` statements, which are not SQLite/libSQL syntax. Use only its `CREATE TABLE` statement as shown above. There is no migration or seed package script. Re-running the inserts adds duplicate rows.
-
-Start Redis, then start the app:
+The example environment is ready for development. Start local Redis at `redis://localhost:6379`, then initialize SQLite and start the app:
 
 ```sh
+bun run db:setup
 bun run dev
 ```
 
 Open `http://localhost:3000`.
 
+| Variable              | Purpose / local value                                                                                              |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `VITE_ENV`            | `development`, `testing`, or `production`; selects database and quiz behavior.                                     |
+| `SQLITE_DATABASE_URL` | Local SQLite URL, defaults to `file:local.db` relative to the project root. Parent directories must already exist. |
+| `REDIS_URL`           | Defaults to `redis://localhost:6379` outside production; explicitly required in production.                        |
+| `TURSO_DATABASE_URL`  | Required only in production: a remote `libsql://` or `https://` Turso URL.                                         |
+| `TURSO_AUTH_TOKEN`    | Required only in production.                                                                                       |
+| `PORT`                | Use `3000` locally.                                                                                                |
+| `NODE_VERSION`        | Still required by validation; the example supplies `24.5.1`. The app runs on Bun.                                  |
+| `NITRO_PRESET`        | The example uses `bun`, matching the configured build preset.                                                      |
+
+`bun run db:setup` creates the SQLite table and seeds it from `src/db/sql/inserts.sql` only when empty. Re-running it preserves existing questions. It refuses to run outside development and never connects to Turso or Redis. Local database files are excluded from Git and Docker builds. Existing `.env` files should set `VITE_ENV=development` and point `REDIS_URL` at local Redis.
+
+Production databases must be provisioned separately using `src/db/sql/schema.sql` and, once, `src/db/sql/inserts.sql`. Running the seed SQL directly more than once adds duplicates.
+
+Keep credentials in `.env` or your host's environment configuration. `VITE_ENV` is separate from Vite's build mode; never put secrets in `VITE_` variables.
+
 ## Commands
 
 | Command                   | Purpose                                                                     |
 | ------------------------- | --------------------------------------------------------------------------- |
+| `bun run db:setup`        | Create and seed the local development SQLite database if empty.             |
+| `bun run test:db`         | Test database selection, local setup, and production validation.            |
 | `bun run dev`             | Start the development server on port 3000.                                  |
 | `bun run generate-routes` | Regenerate the TanStack route tree.                                         |
 | `bun run build`           | Build the application with Vite/Nitro.                                      |
@@ -103,7 +95,7 @@ bun run test:e2e:run
 
 Playwright targets `http://localhost:3000` and runs Chromium, Firefox, and WebKit. Its automatic `webServer` setup is commented out, so start the server yourself. Restart any existing development server in testing mode before running the tests.
 
-Testing mode returns `src/data/testData.json` instead of querying the question database. It still imports the database models first, initializing the Turso and Bun Redis clients, so it still requires Bun and valid environment configuration. It is not a fully isolated offline mode, and there is no `dev:offline` script.
+Testing mode returns `src/data/testData.json` before importing database clients, so browser tests do not connect to SQLite, Turso, or Redis. The non-production environment settings still require valid values; copying `.env.example` supplies them.
 
 The tests cover static page elements and seven consecutive quiz rounds, including correct/incorrect feedback, scores, and percentages. They depend on fixture order, element IDs, button text, and specific colors. The ten-item fixture's end-of-list behavior is not covered; the current next-question indexing can exceed its bounds.
 
@@ -117,7 +109,7 @@ src/
   components/              Quiz state, scoreboard, and feedback
     style/                 Custom buttons, signs, scorecards, and spinner
   serverFunctions/         Server functions for questions and app mode
-  db/                      Turso client, models, Redis client, and SQL
+  db/                      SQLite/Turso client, models, Redis client, and SQL
   data/testData.json       Deterministic browser-test questions
   data/data.ts             Static source lists; not used by the live loader
   integrations/            TanStack Query context and devtools
@@ -129,9 +121,9 @@ tests/                     Playwright specs and shared helpers
 public/                    Logo, icons, and other static assets
 ```
 
-The home route loader calls `getData()` and `getViteEnv()`, then passes their results to `Quiz`. The data server function dynamically imports the database models to keep Bun-specific code out of the client bundle.
+The home route loader calls `getData()` and `getViteEnv()`, then passes their results to `Quiz`. The data server function dynamically imports the database models to keep database and Redis code out of the client bundle.
 
-Outside testing mode, `getAllItems()` checks Redis key `fop::data`, then queries `SELECT * FROM items` on a cache miss. Database rows are mapped to `{ id, name, type }` and cached for 216,000 seconds (60 hours). Redis errors are rethrown; there is no database fallback on a Redis failure. After changing database questions, invalidate that cache key in the relevant environment or wait for expiry. Editing `src/data/data.ts` does not update the live database.
+Development uses SQLite and local Redis; production uses Turso and the configured Redis service. Outside testing mode, `getAllItems()` checks Redis key `fop::data`, then queries `SELECT * FROM items` on a cache miss. Database rows are mapped to `{ id, name, type }` and cached for 216,000 seconds (60 hours). Redis reads are cache-first. Connection errors, command timeouts, and invalid cached data fall back to the database; failed cache writes still return database results. Redis connections and commands have one-second timeouts, with bounded per-command retries and background reconnection. Database errors still propagate. After changing database questions, invalidate that cache key in the relevant environment or wait for expiry. Editing `src/data/data.ts` does not update the live database.
 
 ## Production
 
@@ -142,4 +134,4 @@ bun run start
 
 Supply the required environment variables and use `VITE_ENV=production`. The start script uses `.output/server/index.mjs`; do not substitute the old `dist/server` path or a Node-only runtime.
 
-`Dockerfile` installs from `bun.lock`, builds the app, exposes port 3000, and runs `bun run start`. `render.yml` declares a Docker web service deploying the `production` branch. Configure credentials, Redis access, and the remaining environment variables on the host; the Render file does not provision databases or declare those values. There is currently no `.dockerignore`, so exclude local `.env` files and other private files from the Docker build context before building an image.
+`Dockerfile` installs from `bun.lock`, builds the app, exposes port 3000, and runs `bun run start`. `render.yml` declares a Docker web service deploying the `production` branch. Configure credentials, Redis access, and the remaining environment variables on the host; the Render file does not provision databases or declare those values. `.dockerignore` excludes local environment files, SQLite databases, and build artifacts from the image context.

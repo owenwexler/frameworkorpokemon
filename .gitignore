@@ -11,3 +11,9 @@ dist-ssr
 .vinxi
 __unconfig*
 todos.json
+
+# Local SQLite databases and journals
+*.db
+*.db-*
+*.sqlite
+*.sqlite-*
