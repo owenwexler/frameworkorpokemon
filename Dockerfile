@@ -1,5 +1,4 @@
-# Lock to the final Zig-based stable release
-FROM oven/bun:1.3.14-alpine AS base
+FROM oven/bun:alpine AS base
 WORKDIR /app
 
 # Install dependencies
@@ -12,6 +11,6 @@ COPY . .
 # --- Framework Specific Configurations ---
 
 # For Next.js / TanStack Start:
-RUN bun run build
+RUN rm -rf node_modules && bun install --frozen-lockfile && bun run build
 EXPOSE 3000
 CMD ["bun", "run", "start"]
